@@ -34,8 +34,7 @@ public class IntBoard {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 				grid[i][j] = new BoardCell(i, j);
-				System.out.println(grid[i][j]);
-				adjMtx.put(grid[i][j], new HashSet<BoardCell>());
+				//System.out.println(grid[i][j]);
 			}
 		}
 		
@@ -51,8 +50,34 @@ public class IntBoard {
 		// algorithm here
 		// store result in adjMtx.at(grid[r][c]).put(BoardCell)
 		
-		
-		
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				// valid neighbor if x+1,x-1,y+1,y-1 are not negative or greater than row/col
+				// store vals into set, put set in map
+				
+				Set<BoardCell> temp = new HashSet<BoardCell>();
+				
+				//test x - 1
+				if ( i-1 >= 0 ) {
+					temp.add(grid[i-1][j]);
+				} 
+				//test x + 1
+				if ( i+1 <= 3 ) {
+					temp.add(grid[i+1][j]);
+				}
+				//test y - 1
+				if ( j-1 >= 0 ) {
+					temp.add(grid[i][j-1]);
+				}
+				//test y + 1
+				if (j+1 <= 3 ) {
+					temp.add(grid[i][j+1]);
+				}
+				
+				// add temp set and board cell to map
+				adjMtx.put(grid[i][j], temp);
+			}
+		}
 	}
 	
 	public Set<BoardCell> getAdjList(BoardCell cell) {
