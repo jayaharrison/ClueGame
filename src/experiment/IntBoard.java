@@ -81,21 +81,40 @@ public class IntBoard {
 	}
 	
 	public Set<BoardCell> getAdjList(BoardCell cell) {
-		//Returns the adjacency list for one cell
-		// will use visited in coordination
-		
 		return adjMtx.get(cell);
-		
 	}
 	
-	public void calcTargets(BoardCell startCell, int pathLength) {
+	public void calcTargets(BoardCell startCell, int moves) {
 		// access adjmatrix, calculate paths
 		// store results into target
 		
+		Set<BoardCell> adjCells = new HashSet<BoardCell>();
+		adjCells = getAdjList(startCell);
+		
+		
+		for ( BoardCell currentCell : adjCells ) {
+			if (!visited.contains(currentCell) ) {
+				
+				// add currentCell to visited
+				visited.add(currentCell);
+				
+				if ( moves == 1 ) {
+					targets.add(currentCell);
+				}
+				else {
+					calcTargets(currentCell, moves-1);
+				}
+			} 
+			
+			// remove current cell from visited
+			visited.remove(currentCell);
+			return;
+		}
+	
 	}
 	
 	public Set<BoardCell> getTargets() {
-		// returns the list of targets as a hashset?
+		// returns the list of targets as a hashset
 		return targets;
 		
 	}
