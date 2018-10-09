@@ -1,3 +1,10 @@
+/**
+ * @author Jay Harrison
+ * @author Adam Kinard
+ * 
+ * JUnit test cases, self-explanatory
+ */
+
 package tests;
 
 import static org.junit.Assert.*;
@@ -16,12 +23,11 @@ public class IntBoardTests {
 	
 	@Before
     public void beforeAll() {
-       board = new IntBoard();  // constructor should call calcAdjacencies() so you can test them
+       board = new IntBoard();  
     }
 	
 	/*
 	 * Test adjacencies for top left corner
-	 * 
 	 */
 	
 	@Test
@@ -106,7 +112,7 @@ public class IntBoardTests {
 	 */
 	
 	@Test
-	public void testTargets0_3()
+	public void testTargets00_3()
 	{
 		BoardCell cell = board.getCell(0, 0);
 		board.calcTargets(cell, 3);
@@ -160,14 +166,15 @@ public class IntBoardTests {
 		BoardCell cell = board.getCell(2, 2);
 		board.calcTargets(cell, 3);
 		Set targets = board.getTargets();
-		assertEquals(7, targets.size());
-		assertTrue(targets.contains(board.getCell(2, 3)));
-		assertTrue(targets.contains(board.getCell(3, 0)));
-		assertTrue(targets.contains(board.getCell(2, 1)));
-		assertTrue(targets.contains(board.getCell(1, 2)));
-		assertTrue(targets.contains(board.getCell(0, 1)));
-		assertTrue(targets.contains(board.getCell(1, 0)));
-		assertTrue(targets.contains(board.getCell(0, 3)));
+		assertEquals(8, targets.size());
+		assertTrue(targets.contains(board.getCell(2, 3))); //
+		assertTrue(targets.contains(board.getCell(3, 0))); //
+		assertTrue(targets.contains(board.getCell(2, 1))); //
+		assertTrue(targets.contains(board.getCell(1, 2))); //
+		assertTrue(targets.contains(board.getCell(0, 1))); // 
+		assertTrue(targets.contains(board.getCell(1, 0))); //
+		assertTrue(targets.contains(board.getCell(0, 3))); //
+		assertTrue(targets.contains(board.getCell(3, 2))); 
 	}
 	
 	/*

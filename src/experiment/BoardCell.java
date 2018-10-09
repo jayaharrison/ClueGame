@@ -19,6 +19,11 @@ public class BoardCell {
 		this.column = 0;
 	}
 	
+	/**
+	 * Constructor for new board cell including row and column params
+	 * @param row
+	 * @param column
+	 */
 	BoardCell(int row, int column) {
 		super();
 		this.row = row;
@@ -26,12 +31,8 @@ public class BoardCell {
 	}
 
 
-
 	@Override
 	public String toString() {
 		return "(" + row + ", " + column + ")";
 	}
-
-	
-
 }

@@ -19,22 +19,25 @@ import java.util.Set;
 
 public class IntBoard {
 
-	private BoardCell[][] grid; //???
-	//Hashset-- data structure to conatin the board cells
+	private BoardCell[][] grid; 
 	private Map<BoardCell, Set<BoardCell>> adjMtx;
 	private Set<BoardCell> visited;
 	private Set<BoardCell> targets;
 	
+	// Row/Col constants
+	private final static int ROWS = 4;
+	private final static int COLUMNS = 4;
+	
 	public IntBoard() {
 		
-		// initialize board
-		grid = new BoardCell[4][4];
+		// initialize board (grid)
+		grid = new BoardCell[ROWS][COLUMNS];
 		adjMtx = new HashMap<BoardCell, Set<BoardCell>>();
 		
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 4; j++) {
+		// initialize cells in grid
+		for (int i = 0; i < ROWS; i++) {
+			for (int j = 0; j < COLUMNS; j++) {
 				grid[i][j] = new BoardCell(i, j);
-				//System.out.println(grid[i][j]);
 			}
 		}
 		
@@ -46,14 +49,13 @@ public class IntBoard {
 	}
 	
 	public void calcAdjacencies() {
-		// calculate adjacent squares
-		// algorithm here
-		// store result in adjMtx.at(grid[r][c]).put(BoardCell)
 		
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 4; j++) {
+		// calculate adjacent squares
+		for (int i = 0; i < ROWS; i++) {
+			for (int j = 0; j < COLUMNS; j++) {
+				
 				// valid neighbor if x+1,x-1,y+1,y-1 are not negative or greater than row/col
-				// store vals into set, put set in map
+				// store vals into temp set, put set into adjMtx under grid[r][c] 
 				
 				Set<BoardCell> temp = new HashSet<BoardCell>();
 				
@@ -62,7 +64,7 @@ public class IntBoard {
 					temp.add(grid[i-1][j]);
 				} 
 				//test x + 1
-				if ( i+1 <= 3 ) {
+				if ( i+1 <= ROWS-1 ) {
 					temp.add(grid[i+1][j]);
 				}
 				//test y - 1
@@ -70,7 +72,7 @@ public class IntBoard {
 					temp.add(grid[i][j-1]);
 				}
 				//test y + 1
-				if (j+1 <= 3 ) {
+				if (j+1 <= COLUMNS-1 ) {
 					temp.add(grid[i][j+1]);
 				}
 				
@@ -80,20 +82,43 @@ public class IntBoard {
 		}
 	}
 	
+	/**
+	 * Adjacent cell getter for given cell
+	 * @param cell
+	 * @return
+	 */
 	public Set<BoardCell> getAdjList(BoardCell cell) {
 		return adjMtx.get(cell);
 	}
 	
+	/**
+	 * Target calculating function, calls findAllTargets() inside
+	 * @param startCell
+	 * @param moves
+	 */
 	public void calcTargets(BoardCell startCell, int moves) {
-		// access adjmatrix, calculate paths
-		// store results into target
 		
-		Set<BoardCell> adjCells = new HashSet<BoardCell>();
-		adjCells = getAdjList(startCell);
+		// clear visited/target lists
+		targets.clear();
+		visited.clear();
 		
+		// add starting cell so no backtracking
+		visited.add(startCell);
 		
-		for ( BoardCell currentCell : adjCells ) {
-			if (!visited.contains(currentCell) ) {
+		// call recursive function
+		findAllTargets(startCell, moves);
+
+	}
+	
+	/**
+	 * Recursive helper function to calculate valid moves with given start cell
+	 * @param startCell
+	 * @param moves
+	 */
+	public void findAllTargets(BoardCell startCell, int moves) {
+		
+		for ( BoardCell currentCell : getAdjList(startCell) ) {
+			if ( !(visited.contains(currentCell)) ) {
 				
 				// add currentCell to visited
 				visited.add(currentCell);
@@ -102,23 +127,24 @@ public class IntBoard {
 					targets.add(currentCell);
 				}
 				else {
-					calcTargets(currentCell, moves-1);
+					findAllTargets(currentCell, moves-1);
 				}
-			} 
-			
-			// remove current cell from visited
-			visited.remove(currentCell);
-			return;
+				// remove current cell from visited
+				visited.remove(currentCell);
+			}
 		}
-	
 	}
 	
 	public Set<BoardCell> getTargets() {
-		// returns the list of targets as a hashset
 		return targets;
-		
 	}
 	
+	/**
+	 * Cell getting funtion, returns boardCell at row and column specified
+	 * @param r
+	 * @param c
+	 * @return
+	 */
 	public BoardCell getCell(int r, int c) {
 		//System.out.println("Board cell: " + grid[r][c]);
 		return grid[r][c];
