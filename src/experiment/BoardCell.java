@@ -13,7 +13,7 @@ public class BoardCell {
 	int row = 0;
 	int column = 0;
 	
-	BoardCell() {
+public BoardCell() {
 		super();
 		this.row = 0;
 		this.column = 0;
@@ -24,7 +24,7 @@ public class BoardCell {
 	 * @param row
 	 * @param column
 	 */
-	BoardCell(int row, int column) {
+	public BoardCell(int row, int column) {
 		super();
 		this.row = row;
 		this.column = column;
