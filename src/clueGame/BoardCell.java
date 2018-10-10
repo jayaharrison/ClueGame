@@ -5,7 +5,7 @@ package clueGame;
  * @author Jay Harrison
  *
  *This class represents one cell in the grid.
- *It includes two member variables of type int to represent the row and column
+ *Includes all member variables of the cells along with various test methods and getters/setters
  *
  */
 
@@ -36,6 +36,11 @@ public class BoardCell {
 		this.direction = direction;
 	}
 	
+	/**
+	 * BoardCell constructor for room and column
+	 * @param row
+	 * @param column
+	 */
 	public BoardCell(int row, int column) {
 		super();
 		this.row = row;
@@ -43,7 +48,6 @@ public class BoardCell {
 	}
 	
 	public char getInitial() {
-		// FIX ME LATER: RETURNING RANDOM CHAR
 		return initial;
 	}
 
@@ -51,6 +55,10 @@ public class BoardCell {
 		return row;
 	}
 
+	/**
+	 * Set row val
+	 * @param row
+	 */
 	public void setRow(int row) {
 		this.row = row;
 	}
@@ -59,6 +67,10 @@ public class BoardCell {
 		return column;
 	}
 
+	/**
+	 * Set column val
+	 * @param column
+	 */
 	public void setColumn(int column) {
 		this.column = column;
 	}

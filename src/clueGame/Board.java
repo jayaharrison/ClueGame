@@ -18,9 +18,11 @@ public final class Board {
 	
 	private Map<Character, String> legend = new HashMap<Character, String>();
 	private Map<BoardCell, Set<BoardCell>> adjMatrix = new HashMap<BoardCell, Set<BoardCell>>();
+	private Set<BoardCell> doorways = new HashSet<BoardCell>();
 	
 	private Set<BoardCell> targets = new HashSet<BoardCell>();
-	//private Set<BoardCell> visited = new HashSet<BoardCell>();
+	
+	private Set<BoardCell> visited = new HashSet<BoardCell>();
 	
 	private String boardConfigFile;
 	private String roomConfigFile;
@@ -41,6 +43,10 @@ public final class Board {
 				board[i][j] = cell;
 			}
 		}
+		
+		loadRoomConfig();
+		loadBoardConfig();
+		
 	}
 	public void loadRoomConfig() {
 		

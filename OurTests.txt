@@ -1,0 +1,8 @@
+Authors: Jay Harrison, Adam Kinard
+
+For our test cells, we chose all different rooms for the door tests making sure that they had doors opening up in all 4 directions. Our kitchen doors
+open to the right, the crematorium has a door opening down, and the reptile room has doors opening both left and upwards. We plan on adding a set for 
+our doorways so that our program can check isDoorway() against that rather than cycling through all of the rooms every time it is called, however we 
+will implement that in Part II. For checking individual cell initials, we tried to choose extrema cells such as the 4 corners or cells right on the 
+border to make sure that the whole board loaded correctly. We also tested the closet and a walkway square to make sure those were aligned correctly as 
+well. All constants involving size were also checked against our board and legend to ensure correct initialization. 
