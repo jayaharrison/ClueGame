@@ -35,7 +35,12 @@ public final class Board {
 	}
 
 	public void initialize() {
-		
+		for ( int i = 0; i < MAX_BOARD_SIZE; i++ ) {
+			for ( int j = 0; j < MAX_BOARD_SIZE; j++ ) {
+				BoardCell cell = new BoardCell();
+				board[i][j] = cell;
+			}
+		}
 	}
 	public void loadRoomConfig() {
 		

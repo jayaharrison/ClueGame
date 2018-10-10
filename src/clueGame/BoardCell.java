@@ -13,7 +13,7 @@ package clueGame;
 public class BoardCell {
 	private int row = 0;
 	private int column = 0;
-	private char initial = ' ';
+	private char initial = '.';
 	private DoorDirection direction;
 	
 	public BoardCell() {
@@ -22,7 +22,7 @@ public class BoardCell {
 	}
 	
 	/**
-	 * Constructor for new board cell including row and column params
+	 * Constructor for new board cell including row, column, room initial, and door direction params
 	 * @param row
 	 * @param column
 	 * @param initial
@@ -43,6 +43,7 @@ public class BoardCell {
 	}
 	
 	public char getInitial() {
+		// FIX ME LATER: RETURNING RANDOM CHAR
 		return initial;
 	}
 
