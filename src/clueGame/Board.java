@@ -1,9 +1,13 @@
 package clueGame;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
+import java.io.*;
 
 //import clueGame.BoardCell;
 
@@ -37,21 +41,120 @@ public final class Board {
 	}
 
 	public void initialize() {
-		for ( int i = 0; i < MAX_BOARD_SIZE; i++ ) {
-			for ( int j = 0; j < MAX_BOARD_SIZE; j++ ) {
-				BoardCell cell = new BoardCell();
-				board[i][j] = cell;
-			}
+		
+		try {
+			loadRoomConfig();
+		} catch (BadConfigFormatException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			loadBoardConfig();
+		} catch (BadConfigFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
-		loadRoomConfig();
-		loadBoardConfig();
+	}
+	public void loadRoomConfig() throws BadConfigFormatException {
+		//Read in legend.txt one line at a time, storing vals into legend set
+		FileReader file = null;
+		try {
+			file = new FileReader(roomConfigFile);
+		}catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		Scanner in = new Scanner(file);
+		//Split based on commas with limit equal to 2 commas
+		while(in.hasNext()){
+			String temp = in.nextLine();
+			List<String> legendArray = Arrays.asList(temp.split(", "));
+			
+			String keyTemp = legendArray.get(0);
+			char key = keyTemp.charAt(0);
+			
+			String value = legendArray.get(1);
+			String cardType = legendArray.get(2);
+			//System.out.println("Card: '" + cardType + "'");
+			if(!cardType.equals("Other") && !cardType.equals("Card")) {
+				throw new BadConfigFormatException();
+			}
+			legend.put(key, value);
+		}
 		
 	}
-	public void loadRoomConfig() {
+	public void loadBoardConfig() throws BadConfigFormatException {
+		//Read in csv file one letter at a time,
+		FileReader file = null;
+		try {
+			file = new FileReader(boardConfigFile);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		Scanner in = new Scanner(file);
+		int rowCount = 0;
 		
-	}
-	public void loadBoardConfig() {
+		int max = 0;
+		
+		while(in.hasNext()) {
+			String temp = in.nextLine();
+			List<String> rowArray = Arrays.asList(temp.split(","));
+			numColumns = rowArray.size();
+			
+			if ( rowArray.size() < max ) {
+				throw new BadConfigFormatException();
+			} else {
+				max = rowArray.size();
+			}
+			
+			char init;
+			char roomChar = '?';
+			DoorDirection d;
+			
+			for ( int i =0; i < rowArray.size(); i++ ) {
+				init = rowArray.get(i).charAt(0);
+				//int colCount = 0;
+				System.out.println(init);
+				if (!legend.containsKey(init)) throw new BadConfigFormatException();
+				if ( (rowArray.get(i).length() == 2) && rowArray.get(i).charAt(1) != 'N' ) {
+					roomChar = rowArray.get(i).charAt(1);
+				}
+				
+				
+				switch (roomChar) {
+				case 'R':
+					d = DoorDirection.RIGHT;
+					break;
+				case 'L':
+					d = DoorDirection.LEFT;
+					break;
+				case 'D':
+					d = DoorDirection.DOWN;
+					break;
+				case 'U':
+					d = DoorDirection.UP;
+					break;
+
+				default:
+					d = DoorDirection.NONE;
+					break;
+				}
+				
+				roomChar = '?';
+				BoardCell cell = new BoardCell(rowCount, i, init, d);
+				board[rowCount][i] = cell;
+				
+				if (board[rowCount][i].getDoorDirection() != DoorDirection.NONE) {
+					doorways.add(board[rowCount][i]);
+				}
+				//colCount++;
+				//if(numColumns != 0 && colCount != numColumns) throw new BadConfigFormatException();
+				//numColumns = colCount;
+			}
+			rowCount++;
+		}
+		numRows = rowCount;
+		
 		
 	}
 	public void calcAdjacencies() {

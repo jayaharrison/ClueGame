@@ -11,14 +11,16 @@ package clueGame;
 
 
 public class BoardCell {
-	private int row = 0;
-	private int column = 0;
-	private char initial = '.';
+	private int row;
+	private int column;
+	private char initial;
 	private DoorDirection direction;
 	
 	public BoardCell() {
 		row = 0;
 		column = 0;
+		initial = ' ';
+		direction = DoorDirection.NONE;
 	}
 	
 	/**
@@ -29,23 +31,12 @@ public class BoardCell {
 	 * @param direction
 	 */
 	public BoardCell(int row, int column, char initial, DoorDirection direction) {
-		super();
 		this.row = row;
 		this.column = column;
 		this.initial = initial;
 		this.direction = direction;
 	}
 	
-	/**
-	 * BoardCell constructor for room and column
-	 * @param row
-	 * @param column
-	 */
-	public BoardCell(int row, int column) {
-		super();
-		this.row = row;
-		this.column = column;
-	}
 	
 	public char getInitial() {
 		return initial;
@@ -86,6 +77,7 @@ public class BoardCell {
 	}
 	
 	public boolean isDoorway() {
+		if (this == null) return false;
 		if (direction == DoorDirection.NONE) return false;
 		else return true;
 	}

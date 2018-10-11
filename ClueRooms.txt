@@ -6,5 +6,6 @@ H, Hydroponics Lab, Card
 T, Tool Closet, Card
 M, Crematorium, Card
 C, Cinema, Card
+B, Ballroom, Card
 X, Closet, Other
 W, Walkway, Other

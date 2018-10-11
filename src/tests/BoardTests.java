@@ -20,7 +20,7 @@ import clueGame.DoorDirection;
 
 public class BoardTests {
 	// Constants to check whether data was loaded correctly
-	public static final int LEGEND_SIZE = 10;
+	public static final int LEGEND_SIZE = 11;
 	public static final int NUM_ROWS = 21;
 	public static final int NUM_COLUMNS = 22;
 
