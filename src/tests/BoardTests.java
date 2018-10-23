@@ -61,6 +61,7 @@ public class BoardTests {
 	// Test a doorway in each direction (RIGHT/LEFT/UP/DOWN), plus 
 	// two cells that are not a doorway.
 	// These cells are white on the planning spreadsheet
+	// Shown as WHITE on board
 	@Test
 	public void FourDoorDirections() {
 		BoardCell room = board.getCellAt(17, 4);

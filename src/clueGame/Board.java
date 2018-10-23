@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+
+import clueGame.BoardCell;
+
 import java.io.*;
 
 //import clueGame.BoardCell;
@@ -56,6 +59,7 @@ public final class Board {
 		}
 		
 	}
+	
 	public void loadRoomConfig() throws BadConfigFormatException {
 		//Read in legend.txt one line at a time, storing vals into legend set
 		FileReader file = null;
@@ -83,7 +87,9 @@ public final class Board {
 		}
 		
 	}
+	
 	public void loadBoardConfig() throws BadConfigFormatException {
+
 		//Read in csv file one letter at a time,
 		FileReader file = null;
 		try {
@@ -157,8 +163,12 @@ public final class Board {
 		
 		
 	}
-	public void calcAdjacencies() {
-				
+	
+	public Set<BoardCell> getAdjList(int r, int c) {
+		Set<BoardCell> tempSet = new HashSet<BoardCell>();
+		tempSet.add(new BoardCell(0,0,' ',DoorDirection.NONE));
+		adjMatrix.put(getCellAt(r,c), tempSet);
+		return adjMatrix.get(getCellAt(r,c));
 	}
 	/**
 	 * Calculate all targets from a given cell with a given number of steps
@@ -166,9 +176,14 @@ public final class Board {
 	 * @param pathLength
 	 */
 	
-	public void calcTargets(BoardCell cell, int pathLength) {
+	public void calcTargets(int r, int c, int s) {
 		
 	}
+	
+	public Set<BoardCell> getTargets() {
+		return targets;
+	}
+	
 	public Map<Character, String> getLegend() {
 		return legend;
 	}
