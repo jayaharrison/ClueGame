@@ -16,7 +16,7 @@ import org.junit.Test;
 import clueGame.Board;
 import clueGame.BoardCell;
 
-public class AdjTargetTests {
+public class CustomAdjacencyTargetTests {
 	// We make the Board static because we can load it one time and 
 	// then do all the tests. 
 	private static Board board;

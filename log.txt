@@ -1,3 +1,14 @@
+We used pair programming, mostly on my computer this time. All commits were pushed from Jay Harrison however
+we both wrote code on my machine.
+
+
+
+commit 561e8519828f2d0bb9788be50fbeafcf12965e80
+Author: Jay Harrison <jharrison@mines.edu>
+Date:   Tue Oct 23 01:40:52 2018 -0600
+
+    Target/adj tests pass. JavaDocs updated
+
 commit 8e17df1fe79a8204b602dbfffa5a99bf4b7b29ca
 Author: Jay Harrison <jharrison@mines.edu>
 Date:   Mon Oct 22 23:05:19 2018 -0600
