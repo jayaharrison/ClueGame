@@ -1,0 +1,65 @@
+commit 8e17df1fe79a8204b602dbfffa5a99bf4b7b29ca
+Author: Jay Harrison <jharrison@mines.edu>
+Date:   Mon Oct 22 23:05:19 2018 -0600
+
+    Adjacency and target tests are failing, submitting part I of C14A
+
+commit 6ad548a63ef15b0694221fef566cf759716cdf3a
+Author: Michael Kinard <mkinard@mines.edu>
+Date:   Wed Oct 10 22:28:38 2018 -0600
+
+    Passing all tests
+
+commit 2ffa55646ffff1de7a590677ada44dcd13cfdd2a
+Author: Jay Harrison <jharrison@mines.edu>
+Date:   Wed Oct 10 17:53:09 2018 -0600
+
+    Added custom BoartTests class for game specific testing. Added layout and room csv files to repo.
+
+commit b9fbc3be725613f3d9e91f892db2f21826e25ae9
+Author: Jay Harrison <jharrison@mines.edu>
+Date:   Wed Oct 10 16:52:15 2018 -0600
+
+    Fixed the errors in tests 3,4, all tests fail now.
+
+commit 6e1739bf7cbb8d1398c952f0006886ddfcb6a1aa
+Author: Michael Kinard <mkinard@mines.edu>
+Date:   Tue Oct 9 13:33:38 2018 -0600
+
+    2 Errors, 3 Failures on InitTests
+
+commit c27e8143134612a55c6d40b049c782b4cffe56a2
+Author: Michael Kinard <mkinard@mines.edu>
+Date:   Tue Oct 9 11:29:33 2018 -0600
+
+    Added the JUnit tests for ClueBoard
+
+commit 65d7b55f022bd3b9b2595373afc63b45d0da006b
+Author: Jay Harrison <jharrison@mines.edu>
+Date:   Mon Oct 8 21:29:56 2018 -0600
+
+    Working functions, all tests pass. JavaDocs comments added, C12A-1 assignment complete.
+
+commit a9a1b8fc76989063cadd9957c0fbbf091c23494d
+Author: Jay Harrison <jharrison@mines.edu>
+Date:   Thu Oct 4 18:33:28 2018 -0600
+
+    calcTargets in progress, pushing to work at home
+
+commit 9439829d499fb88bf86f7ef08928f4352762c67d
+Author: Jay Harrison <jharrison@mines.edu>
+Date:   Thu Oct 4 18:07:50 2018 -0600
+
+    Fixed minor test errors, implemented calcAdjacency(), 6/6 function tests passed
+
+commit b071ffd11bac112e8d6242758ac9026c56448cdd
+Author: Jay Harrison <jharrison@mines.edu>
+Date:   Thu Oct 4 17:36:33 2018 -0600
+
+    Method stubs written, tests written (failing), ready to implement functions
+
+commit 86a47c151b2fed4079db7a62d71b84d88cc2d9bb
+Author: jayaharrison <36429651+jayaharrison@users.noreply.github.com>
+Date:   Thu Oct 4 17:22:51 2018 -0600
+
+    Initial commit

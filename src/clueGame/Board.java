@@ -1,3 +1,9 @@
+/**
+ * @author Jay Harrison
+ * @author Adam Kinard
+ * 
+ * This class governs the gameboard. Performs set up and calculates available moves.
+ */
 package clueGame;
 
 import java.util.Arrays;
@@ -11,8 +17,6 @@ import java.util.Set;
 import clueGame.BoardCell;
 
 import java.io.*;
-
-//import clueGame.BoardCell;
 
 public final class Board {
 
@@ -54,12 +58,17 @@ public final class Board {
 		try {
 			loadBoardConfig();
 		} catch (BadConfigFormatException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+		//Calculates room adj
+		calcAdjacencies();
 	}
 	
+	/**
+	 * Loads room configuration files, throws exception if error is found in file format
+	 * @throws BadConfigFormatException
+	 */
 	public void loadRoomConfig() throws BadConfigFormatException {
 		//Read in legend.txt one line at a time, storing vals into legend set
 		FileReader file = null;
@@ -88,6 +97,10 @@ public final class Board {
 		
 	}
 	
+	/**
+	 * Loads board configuration files, throws exception if error is found in file format
+	 * @throws BadConfigFormatException
+	 */
 	public void loadBoardConfig() throws BadConfigFormatException {
 
 		//Read in csv file one letter at a time,
@@ -160,24 +173,134 @@ public final class Board {
 			rowCount++;
 		}
 		numRows = rowCount;
-		
-		
 	}
 	
+	public void calcAdjacencies() {
+		
+		// calculate adjacent squares
+		for (int i = 0; i < numRows; i++) {
+			for (int j = 0; j < numColumns; j++) {
+
+				// valid neighbor if x+1,x-1,y+1,y-1 are not negative or greater than row/col
+				// store vals into temp set, put set into adjMtx under grid[r][c] 
+
+				Set<BoardCell> temp = new HashSet<BoardCell>();
+				
+				//test row - 1 (up)
+				if ( i-1 >= 0 ) {
+					// handles going out of doorways
+					if ( getCellAt(i-1, j).isWalkway() && getCellAt(i, j).isDoorway() ) {
+						if ( getCellAt(i,j).getDoorDirection() == DoorDirection.UP ) {
+							temp.add(board[i-1][j]);
+						}
+					} else if ( getCellAt(i-1, j).isWalkway() && !getCellAt(i,j).isRoom() ) {
+						temp.add(board[i-1][j]);
+					}
+					// handles going in to doors
+					if ( getCellAt(i-1, j).getDoorDirection() == DoorDirection.DOWN ) {
+						temp.add(board[i-1][j]);
+					}
+				} 
+				
+				//test row + 1 (down)
+				if ( i+1 < numRows ) {
+					if ( getCellAt(i+1, j).isWalkway() && getCellAt(i, j).isDoorway() ) {
+						if ( getCellAt(i, j).getDoorDirection() == DoorDirection.DOWN ) {
+							temp.add(board[i+1][j]);
+						}
+					} else if ( getCellAt(i+1, j).isWalkway() && !getCellAt(i,j).isRoom() ) {
+						temp.add(board[i+1][j]);
+					}
+					if ( getCellAt(i+1, j).getDoorDirection() == DoorDirection.UP ) {
+						temp.add(board[i+1][j]);
+					}
+				} 
+				
+				//test col - 1 (left)
+				if ( j-1 >= 0 ) {
+					if ( getCellAt(i, j-1).isWalkway() && getCellAt(i, j).isDoorway() ) {
+						if ( getCellAt(i, j).getDoorDirection() == DoorDirection.LEFT ) {
+							temp.add(board[i][j-1]);
+						}
+					} else if ( getCellAt(i, j-1).isWalkway() && !getCellAt(i,j).isRoom() ) {
+						temp.add(board[i][j-1]);
+					}
+					if ( getCellAt(i, j-1).getDoorDirection() == DoorDirection.RIGHT ) {
+						temp.add(board[i][j-1]);
+					}
+				} 
+				
+				//test col + 1 (right)
+				if ( j+1 < numColumns ) {
+					if ( getCellAt(i, j+1).isWalkway() && getCellAt(i, j).isDoorway() ) {
+						if ( getCellAt(i, j).getDoorDirection() == DoorDirection.RIGHT ) {
+							temp.add(board[i][j+1]);
+						}
+					} else if ( getCellAt(i, j+1).isWalkway() && !getCellAt(i,j).isRoom() ) {
+						temp.add(board[i][j+1]);
+					}
+					if ( getCellAt(i, j+1).getDoorDirection() == DoorDirection.LEFT ) {
+						temp.add(board[i][j+1]);
+					}
+				} 
+
+				// add temp set and board cell to map
+				adjMatrix.put(board[i][j], temp);
+			}
+		}
+	}
+	
+	/**
+	 * Returns set of adjacent cells based on row, col
+	 * @param r
+	 * @param c
+	 * @return
+	 */
 	public Set<BoardCell> getAdjList(int r, int c) {
-		Set<BoardCell> tempSet = new HashSet<BoardCell>();
-		tempSet.add(new BoardCell(0,0,' ',DoorDirection.NONE));
-		adjMatrix.put(getCellAt(r,c), tempSet);
 		return adjMatrix.get(getCellAt(r,c));
 	}
+	
 	/**
-	 * Calculate all targets from a given cell with a given number of steps
+	 * Calculates all targets from a given cell with a given number of steps, calls findAllTargets
 	 * @param cell
 	 * @param pathLength
 	 */
-	
 	public void calcTargets(int r, int c, int s) {
+		// clear visited/target lists
+		targets.clear();
+		visited.clear();
+
+		// add starting cell so no backtracking
+		visited.add(getCellAt(r,c));
+
+		// call recursive function
+		findAllTargets(r, c, s);
+	}
+	
+	/**
+	 * Recursive function to find targets from specified cell with specified moves
+	 * @param row
+	 * @param col
+	 * @param moves
+	 */
+	private void findAllTargets(int row, int col, int moves) {
 		
+		for ( BoardCell currentCell : getAdjList(row, col) ) {
+			if ( !(visited.contains(currentCell) ) ) {
+				
+				// add currentCell to visited
+				visited.add(currentCell);
+				
+				if ( moves == 1 || currentCell.isDoorway()) {
+					targets.add(currentCell);
+				}
+				else {
+					findAllTargets(currentCell.getRow(), currentCell.getColumn(), moves-1);
+				}
+				// remove current cell from visited
+				visited.remove(currentCell);
+			}
+		}
 	}
 	
 	public Set<BoardCell> getTargets() {
@@ -189,16 +312,15 @@ public final class Board {
 	}
 	
 	/**
-	 * Sets the respective ConfigFiles to the board and room referenced in the test
+	 * Sets the respective configuration files to the board and room referenced in the test
 	 * @param board
 	 * @param room
 	 */
-	
 	public void setConfigFiles(String boardFile, String roomFile) {
 		boardConfigFile = boardFile;
 		roomConfigFile = roomFile;
-		
 	}
+	
 	
 	public int getNumRows() {
 		return numRows;
@@ -208,6 +330,12 @@ public final class Board {
 		return numColumns;
 	}
 	
+	/**
+	 * Returns cell at given row, col
+	 * @param r
+	 * @param c
+	 * @return
+	 */
 	public BoardCell getCellAt(int r, int c) {
 		return board[r][c];
 	}

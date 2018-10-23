@@ -1,4 +1,3 @@
-package clueGame;
 /**
  * 
  * @author Adam Kinard
@@ -9,6 +8,7 @@ package clueGame;
  *
  */
 
+package clueGame;
 
 public class BoardCell {
 	private int row;
@@ -84,8 +84,7 @@ public class BoardCell {
 
 	@Override
 	public String toString() {
-		return "BoardCell [row=" + row + ", column=" + column + ", initial=" + initial + ", direction=" + direction
-				+ "]";
+		return "(" + row + ", " + column + ", " + initial + ", " + direction + ")";
 	}
 
 	public DoorDirection getDoorDirection() {
