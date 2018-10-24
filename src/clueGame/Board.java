@@ -16,7 +16,8 @@ import java.util.Set;
 
 import clueGame.BoardCell;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 
 public final class Board {
 
@@ -25,23 +26,28 @@ public final class Board {
 	private int numRows;
 	private int numColumns;
 	
-	private BoardCell[][] board = new BoardCell[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
-	
-	private Map<Character, String> legend = new HashMap<Character, String>();
-	private Map<BoardCell, Set<BoardCell>> adjMatrix = new HashMap<BoardCell, Set<BoardCell>>();
-	private Set<BoardCell> doorways = new HashSet<BoardCell>();
-	
-	private Set<BoardCell> targets = new HashSet<BoardCell>();
-	
-	private Set<BoardCell> visited = new HashSet<BoardCell>();
-	
 	private String boardConfigFile;
 	private String roomConfigFile;
 	
+	private BoardCell[][] board;
+	
+	private Map<Character, String> legend;
+	private Map<BoardCell, Set<BoardCell>> adjMatrix;
+	private Set<BoardCell> targets;
+	private Set<BoardCell> visited;
+	
 	// variable used for singleton pattern
 	private static Board theInstance = new Board();
+	
 	// constructor is private to ensure only one can be created
-	private Board() {}
+	private Board() {
+		board = new BoardCell[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
+		legend = new HashMap<Character, String>();
+		adjMatrix = new HashMap<BoardCell, Set<BoardCell>>();
+		targets = new HashSet<BoardCell>();
+		visited = new HashSet<BoardCell>();
+	}
+	
 	// this method returns the only Board
 	public static Board getInstance() {
 		return theInstance;
@@ -58,6 +64,7 @@ public final class Board {
 		try {
 			loadBoardConfig();
 		} catch (BadConfigFormatException e) {
+			// TODO: Add message
 			e.printStackTrace();
 		}
 		
@@ -71,30 +78,33 @@ public final class Board {
 	 */
 	public void loadRoomConfig() throws BadConfigFormatException {
 		//Read in legend.txt one line at a time, storing vals into legend set
-		FileReader file = null;
 		try {
-			file = new FileReader(roomConfigFile);
+			FileReader file = new FileReader(roomConfigFile);
+			
+			Scanner in = new Scanner(file);
+			
+			//Split based on commas with limit equal to 2 commas
+			while(in.hasNext()){
+				String temp = in.nextLine();
+				List<String> legendArray = Arrays.asList(temp.split(", "));
+				
+				String keyTemp = legendArray.get(0);
+				char key = keyTemp.charAt(0);
+				
+				String value = legendArray.get(1);
+				String cardType = legendArray.get(2);
+
+				if(!cardType.equals("Other") && !cardType.equals("Card")) {
+					// TODO: Add message, pass stuff
+					throw new BadConfigFormatException();
+				}
+				legend.put(key, value);
+			}
+			
 		}catch (FileNotFoundException e) {
+			// TODO: Add message
 			e.printStackTrace();
 		}
-		Scanner in = new Scanner(file);
-		//Split based on commas with limit equal to 2 commas
-		while(in.hasNext()){
-			String temp = in.nextLine();
-			List<String> legendArray = Arrays.asList(temp.split(", "));
-			
-			String keyTemp = legendArray.get(0);
-			char key = keyTemp.charAt(0);
-			
-			String value = legendArray.get(1);
-			String cardType = legendArray.get(2);
-			//System.out.println("Card: '" + cardType + "'");
-			if(!cardType.equals("Other") && !cardType.equals("Card")) {
-				throw new BadConfigFormatException();
-			}
-			legend.put(key, value);
-		}
-		
 	}
 	
 	/**
@@ -104,82 +114,75 @@ public final class Board {
 	public void loadBoardConfig() throws BadConfigFormatException {
 
 		//Read in csv file one letter at a time,
-		FileReader file = null;
 		try {
-			file = new FileReader(boardConfigFile);
+			FileReader file = new FileReader(boardConfigFile);
+			
+			Scanner in = new Scanner(file);
+			int rowCount = 0;
+			
+			int max = 0;
+			
+			while(in.hasNext()) {
+				String temp = in.nextLine();
+				List<String> rowArray = Arrays.asList(temp.split(","));
+				numColumns = rowArray.size();
+				
+				if ( rowArray.size() < max ) {
+					throw new BadConfigFormatException();
+				} else {
+					max = rowArray.size();
+				}
+				
+				DoorDirection doorDirection;
+				char roomInitial;
+				
+				for ( int colCount = 0; colCount < rowArray.size(); colCount++ ) {
+					
+					char roomChar = '?';
+					roomInitial = rowArray.get(colCount).charAt(0);
+					
+					// TODO: Add message
+					if (!legend.containsKey(roomInitial)) throw new BadConfigFormatException();
+					
+					if ( (rowArray.get(colCount).length() == 2) && rowArray.get(colCount).charAt(1) != 'N' ) {
+						roomChar = rowArray.get(colCount).charAt(1);
+					}
+					
+					switch (roomChar) {
+					case 'R':
+						doorDirection = DoorDirection.RIGHT;
+						break;
+					case 'L':
+						doorDirection = DoorDirection.LEFT;
+						break;
+					case 'D':
+						doorDirection = DoorDirection.DOWN;
+						break;
+					case 'U':
+						doorDirection = DoorDirection.UP;
+						break;
+					default:
+						doorDirection = DoorDirection.NONE;
+						break;
+					}
+					
+					BoardCell cell = new BoardCell(rowCount, colCount, roomInitial, doorDirection);
+					board[rowCount][colCount] = cell;
+				}
+				rowCount++;
+			}
+			numRows = rowCount;
 		} catch (FileNotFoundException e) {
+			// TODO: Add message
 			e.printStackTrace();
 		}
-		Scanner in = new Scanner(file);
-		int rowCount = 0;
-		
-		int max = 0;
-		
-		while(in.hasNext()) {
-			String temp = in.nextLine();
-			List<String> rowArray = Arrays.asList(temp.split(","));
-			numColumns = rowArray.size();
-			
-			if ( rowArray.size() < max ) {
-				throw new BadConfigFormatException();
-			} else {
-				max = rowArray.size();
-			}
-			
-			char init;
-			char roomChar = '?';
-			DoorDirection d;
-			
-			for ( int i =0; i < rowArray.size(); i++ ) {
-				init = rowArray.get(i).charAt(0);
-				//int colCount = 0;
-				System.out.println(init);
-				if (!legend.containsKey(init)) throw new BadConfigFormatException();
-				if ( (rowArray.get(i).length() == 2) && rowArray.get(i).charAt(1) != 'N' ) {
-					roomChar = rowArray.get(i).charAt(1);
-				}
-				
-				
-				switch (roomChar) {
-				case 'R':
-					d = DoorDirection.RIGHT;
-					break;
-				case 'L':
-					d = DoorDirection.LEFT;
-					break;
-				case 'D':
-					d = DoorDirection.DOWN;
-					break;
-				case 'U':
-					d = DoorDirection.UP;
-					break;
-
-				default:
-					d = DoorDirection.NONE;
-					break;
-				}
-				
-				roomChar = '?';
-				BoardCell cell = new BoardCell(rowCount, i, init, d);
-				board[rowCount][i] = cell;
-				
-				if (board[rowCount][i].getDoorDirection() != DoorDirection.NONE) {
-					doorways.add(board[rowCount][i]);
-				}
-				//colCount++;
-				//if(numColumns != 0 && colCount != numColumns) throw new BadConfigFormatException();
-				//numColumns = colCount;
-			}
-			rowCount++;
-		}
-		numRows = rowCount;
 	}
 	
 	public void calcAdjacencies() {
 		
 		// calculate adjacent squares
-		for (int i = 0; i < numRows; i++) {
-			for (int j = 0; j < numColumns; j++) {
+		for (int row = 0; row < numRows; row++) {
+			for (int col = 0; col < numColumns; col++) {
 
 				// valid neighbor if x+1,x-1,y+1,y-1 are not negative or greater than row/col
 				// store vals into temp set, put set into adjMtx under grid[r][c] 
@@ -187,94 +190,85 @@ public final class Board {
 				Set<BoardCell> temp = new HashSet<BoardCell>();
 				
 				//test row - 1 (up)
-				if ( i-1 >= 0 ) {
+				if ( row-1 >= 0 ) {
 					// handles going out of doorways
-					if ( getCellAt(i-1, j).isWalkway() && getCellAt(i, j).isDoorway() ) {
-						if ( getCellAt(i,j).getDoorDirection() == DoorDirection.UP ) {
-							temp.add(board[i-1][j]);
+					if ( getCellAt(row-1, col).isWalkway() && getCellAt(row, col).isDoorway() ) {
+						if ( getCellAt(row,col).getDoorDirection() == DoorDirection.UP ) {
+							temp.add(board[row-1][col]);
 						}
-					} else if ( getCellAt(i-1, j).isWalkway() && !getCellAt(i,j).isRoom() ) {
-						temp.add(board[i-1][j]);
+					} else if ( getCellAt(row-1, col).isWalkway() && !getCellAt(row,col).isRoom() ) {
+						temp.add(board[row-1][col]);
 					}
 					// handles going in to doors
-					if ( getCellAt(i-1, j).getDoorDirection() == DoorDirection.DOWN ) {
-						temp.add(board[i-1][j]);
+					if ( getCellAt(row-1, col).getDoorDirection() == DoorDirection.DOWN ) {
+						temp.add(board[row-1][col]);
 					}
 				} 
 				
 				//test row + 1 (down)
-				if ( i+1 < numRows ) {
-					if ( getCellAt(i+1, j).isWalkway() && getCellAt(i, j).isDoorway() ) {
-						if ( getCellAt(i, j).getDoorDirection() == DoorDirection.DOWN ) {
-							temp.add(board[i+1][j]);
+				if ( row+1 < numRows ) {
+					if ( getCellAt(row+1, col).isWalkway() && getCellAt(row, col).isDoorway() ) {
+						if ( getCellAt(row, col).getDoorDirection() == DoorDirection.DOWN ) {
+							temp.add(board[row+1][col]);
 						}
-					} else if ( getCellAt(i+1, j).isWalkway() && !getCellAt(i,j).isRoom() ) {
-						temp.add(board[i+1][j]);
+					} else if ( getCellAt(row+1, col).isWalkway() && !getCellAt(row,col).isRoom() ) {
+						temp.add(board[row+1][col]);
 					}
-					if ( getCellAt(i+1, j).getDoorDirection() == DoorDirection.UP ) {
-						temp.add(board[i+1][j]);
+					if ( getCellAt(row+1, col).getDoorDirection() == DoorDirection.UP ) {
+						temp.add(board[row+1][col]);
 					}
 				} 
 				
 				//test col - 1 (left)
-				if ( j-1 >= 0 ) {
-					if ( getCellAt(i, j-1).isWalkway() && getCellAt(i, j).isDoorway() ) {
-						if ( getCellAt(i, j).getDoorDirection() == DoorDirection.LEFT ) {
-							temp.add(board[i][j-1]);
+				if ( col-1 >= 0 ) {
+					if ( getCellAt(row, col-1).isWalkway() && getCellAt(row, col).isDoorway() ) {
+						if ( getCellAt(row, col).getDoorDirection() == DoorDirection.LEFT ) {
+							temp.add(board[row][col-1]);
 						}
-					} else if ( getCellAt(i, j-1).isWalkway() && !getCellAt(i,j).isRoom() ) {
-						temp.add(board[i][j-1]);
+					} else if ( getCellAt(row, col-1).isWalkway() && !getCellAt(row,col).isRoom() ) {
+						temp.add(board[row][col-1]);
 					}
-					if ( getCellAt(i, j-1).getDoorDirection() == DoorDirection.RIGHT ) {
-						temp.add(board[i][j-1]);
+					if ( getCellAt(row, col-1).getDoorDirection() == DoorDirection.RIGHT ) {
+						temp.add(board[row][col-1]);
 					}
 				} 
 				
 				//test col + 1 (right)
-				if ( j+1 < numColumns ) {
-					if ( getCellAt(i, j+1).isWalkway() && getCellAt(i, j).isDoorway() ) {
-						if ( getCellAt(i, j).getDoorDirection() == DoorDirection.RIGHT ) {
-							temp.add(board[i][j+1]);
+				if ( col+1 < numColumns ) {
+					if ( getCellAt(row, col+1).isWalkway() && getCellAt(row, col).isDoorway() ) {
+						if ( getCellAt(row, col).getDoorDirection() == DoorDirection.RIGHT ) {
+							temp.add(board[row][col+1]);
 						}
-					} else if ( getCellAt(i, j+1).isWalkway() && !getCellAt(i,j).isRoom() ) {
-						temp.add(board[i][j+1]);
+					} else if ( getCellAt(row, col+1).isWalkway() && !getCellAt(row,col).isRoom() ) {
+						temp.add(board[row][col+1]);
 					}
-					if ( getCellAt(i, j+1).getDoorDirection() == DoorDirection.LEFT ) {
-						temp.add(board[i][j+1]);
+					if ( getCellAt(row, col+1).getDoorDirection() == DoorDirection.LEFT ) {
+						temp.add(board[row][col+1]);
 					}
 				} 
 
 				// add temp set and board cell to map
-				adjMatrix.put(board[i][j], temp);
+				adjMatrix.put(board[row][col], temp);
 			}
 		}
 	}
 	
 	/**
-	 * Returns set of adjacent cells based on row, col
-	 * @param r
-	 * @param c
-	 * @return
+	 * Setup function to call findAllTargets
+	 * @param row
+	 * @param col
+	 * @param moves
 	 */
-	public Set<BoardCell> getAdjList(int r, int c) {
-		return adjMatrix.get(getCellAt(r,c));
-	}
-	
-	/**
-	 * Calculates all targets from a given cell with a given number of steps, calls findAllTargets
-	 * @param cell
-	 * @param pathLength
-	 */
-	public void calcTargets(int r, int c, int s) {
+	public void calcTargets(int row, int col, int moves) {
 		// clear visited/target lists
 		targets.clear();
 		visited.clear();
-
+		
 		// add starting cell so no backtracking
-		visited.add(getCellAt(r,c));
+		visited.add(getCellAt(row,col));
 
 		// call recursive function
-		findAllTargets(r, c, s);
+		findAllTargets(row, col, moves);
 	}
 	
 	/**
@@ -303,41 +297,66 @@ public final class Board {
 		}
 	}
 	
+	/**
+	 * Get targets
+	 * @return
+	 */
 	public Set<BoardCell> getTargets() {
 		return targets;
 	}
 	
+	/**
+	 * Get legend
+	 * @return
+	 */
 	public Map<Character, String> getLegend() {
 		return legend;
 	}
 	
 	/**
-	 * Sets the respective configuration files to the board and room referenced in the test
-	 * @param board
-	 * @param room
+	 * Returns set of adjacent cells based on row, col
+	 * @param row
+	 * @param col
+	 * @return
+	 */
+	public Set<BoardCell> getAdjList(int row, int col) {
+		return adjMatrix.get(getCellAt(row,col));
+	}
+	
+	/**
+	 * Set board and room configuration files
+	 * @param boardFile
+	 * @param roomFile
 	 */
 	public void setConfigFiles(String boardFile, String roomFile) {
 		boardConfigFile = boardFile;
 		roomConfigFile = roomFile;
 	}
 	
-	
+	/**
+	 * Get numRows
+	 * @return
+	 */
 	public int getNumRows() {
 		return numRows;
 	}
 	
+	/**
+	 * Get numColumns
+	 * @return
+	 */
 	public int getNumColumns() {
 		return numColumns;
 	}
 	
 	/**
-	 * Returns cell at given row, col
-	 * @param r
-	 * @param c
+	 * Get the cell at row, col
+	 * @param row
+	 * @param col
 	 * @return
 	 */
-	public BoardCell getCellAt(int r, int c) {
-		return board[r][c];
+	public BoardCell getCellAt(int row, int col) {
+		return board[row][col];
 	}
 	
 }

@@ -18,7 +18,7 @@ import clueGame.Board;
 import clueGame.BoardCell;
 import clueGame.DoorDirection;
 
-public class BoardTests {
+public class CustomBoardTests {
 	// Constants to check whether data was loaded correctly
 	public static final int LEGEND_SIZE = 11;
 	public static final int NUM_ROWS = 21;
