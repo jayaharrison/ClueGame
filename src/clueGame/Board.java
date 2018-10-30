@@ -28,6 +28,7 @@ public final class Board {
 	
 	private String boardConfigFile;
 	private String roomConfigFile;
+	private String playerConfigFile;
 	
 	private BoardCell[][] board;
 	
@@ -66,6 +67,12 @@ public final class Board {
 		} catch (BadConfigFormatException e) {
 			// TODO: Add message
 			e.printStackTrace();
+		}
+		try {
+			loadPlayerConfig();
+		} catch (BadConfigFormatException e2) {
+			// TODO: Add message
+			e2.printStackTrace();
 		}
 		
 		//Calculates room adj
@@ -176,6 +183,29 @@ public final class Board {
 			// TODO: Add message
 			e.printStackTrace();
 		}
+	}
+	
+	public void loadPlayerConfig() throws BadConfigFormatException {
+		
+		try {
+			FileReader file = new FileReader(playerConfigFile);
+			
+			Scanner in = new Scanner(file);
+			
+			//Split based on commas with limit equal to 2 commas
+			while(in.hasNext()){
+				String temp = in.nextLine();
+				List<String> playerArray = Arrays.asList(temp.split(", "));
+				
+				String name = playerArray.get(1);
+				String color = playerArray.get(2);
+			}
+			
+		}catch (FileNotFoundException e) {
+			// TODO: Add message
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void calcAdjacencies() {
@@ -328,9 +358,10 @@ public final class Board {
 	 * @param boardFile
 	 * @param roomFile
 	 */
-	public void setConfigFiles(String boardFile, String roomFile) {
+	public void setConfigFiles(String boardFile, String roomFile, String playerFile) {
 		boardConfigFile = boardFile;
 		roomConfigFile = roomFile;
+		playerConfigFile = playerFile;
 	}
 	
 	/**

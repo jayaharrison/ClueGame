@@ -9,8 +9,11 @@ public class Player {
 	private int column;
 	private Color color;
 	
-	public Player() {
-		
+	public Player(String playerName, Color color, int row, int column) {
+		this.playerName = playerName;
+		this.color = color;
+		this.row = row;
+		this.column = column;
 	}
 	
 	

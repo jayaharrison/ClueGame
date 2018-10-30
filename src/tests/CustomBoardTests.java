@@ -32,7 +32,7 @@ public class CustomBoardTests {
 		// Board is singleton, get the only instance
 		board = Board.getInstance();
 		// set the file names to use our specific files
-		board.setConfigFiles("ClueRooms.csv", "ClueRooms.txt");		
+		board.setConfigFiles("ClueRooms.csv", "ClueRooms.txt", "CluePlayers.txt");		
 		// Initialize will load BOTH config files 
 		board.initialize();
 	}
