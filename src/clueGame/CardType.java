@@ -6,6 +6,10 @@ public enum CardType {
 	
 	private String cardtype;
 	
+	/**
+	 * CardType constructor
+	 * @param cardtype
+	 */
 	CardType (String cardtype){
 		this.cardtype = cardtype;
 	}

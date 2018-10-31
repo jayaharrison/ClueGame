@@ -6,6 +6,7 @@
  */
 package clueGame;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,6 +37,9 @@ public final class Board {
 	private Map<BoardCell, Set<BoardCell>> adjMatrix;
 	private Set<BoardCell> targets;
 	private Set<BoardCell> visited;
+	private Map<String,Player> playableChars;
+	private ArrayList<String> weapons;
+	private ArrayList<Card> cardDeck;
 	
 	// variable used for singleton pattern
 	private static Board theInstance = new Board();
@@ -47,6 +51,9 @@ public final class Board {
 		adjMatrix = new HashMap<BoardCell, Set<BoardCell>>();
 		targets = new HashSet<BoardCell>();
 		visited = new HashSet<BoardCell>();
+		playableChars = new HashMap<String,Player>();
+		cardDeck = new ArrayList<Card>();
+		weapons = new ArrayList<String>();
 	}
 	
 	// this method returns the only Board
@@ -186,7 +193,9 @@ public final class Board {
 	}
 	
 	public void loadPlayerConfig() throws BadConfigFormatException {
+
 		
+		/*
 		try {
 			FileReader file = new FileReader(playerConfigFile);
 			
@@ -205,7 +214,11 @@ public final class Board {
 			// TODO: Add message
 			e.printStackTrace();
 		}
-		
+		*/
+	}
+	
+	public void loadCardDeck() throws BadConfigFormatException {
+		//Insert all cards
 	}
 	
 	public void calcAdjacencies() {
@@ -362,6 +375,22 @@ public final class Board {
 		boardConfigFile = boardFile;
 		roomConfigFile = roomFile;
 		playerConfigFile = playerFile;
+	}
+	
+	public Player getPlayer(String color) {
+		return playableChars.get(color);
+	}
+	
+	public Map<String,Player> getPlayerMap() {
+		return playableChars;
+	}
+	
+	public ArrayList<Card> getCardDeck() {
+		return cardDeck;
+	}
+	
+	public ArrayList<String> getWeapons() {
+		return weapons;
 	}
 	
 	/**
