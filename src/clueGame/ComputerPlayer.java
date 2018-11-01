@@ -1,3 +1,8 @@
+/**
+ * @author Jay Harrison
+ * @author Adam Kinard
+ */
+
 package clueGame;
 
 import java.awt.Color;

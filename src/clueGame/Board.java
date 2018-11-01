@@ -15,6 +15,9 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
+import java.awt.Color; 
+import java.lang.reflect.Field;
+
 import clueGame.BoardCell;
 
 import java.io.FileNotFoundException;
@@ -41,6 +44,7 @@ public final class Board {
 	private Map<Character, String> legend;
 	private Map<String,Player> playableChars;
 	private ArrayList<String> weapons;
+	
 	private ArrayList<Card> deck;
 	
 	private Solution theSolution;
@@ -95,7 +99,10 @@ public final class Board {
 		
 		//Calculates room adj
 		calcAdjacencies();
-		dealCards();
+		loadCardDeck();
+		
+		// Can't call when testing, will remove cards from deck permanently
+		//dealCards();
 	}
 	
 
@@ -207,33 +214,67 @@ public final class Board {
 	
 	public void loadPlayerConfig() throws BadConfigFormatException {
 
-		
-		/*
 		try {
 			FileReader file = new FileReader(playerConfigFile);
-			
 			Scanner in = new Scanner(file);
 			
 			//Split based on commas with limit equal to 2 commas
-			while(in.hasNext()){
+			while(in.hasNextLine()){
 				String temp = in.nextLine();
 				List<String> playerArray = Arrays.asList(temp.split(", "));
 				
-				String name = playerArray.get(1);
-				String color = playerArray.get(2);
+				String name = playerArray.get(0);
+				String charColor = playerArray.get(1).toLowerCase();
+				Color color = convertColor(charColor);
+				
+				
+				// Switch for start loc
+				int row = 0, col = 0; 
+				switch( charColor ) {
+					case "red":
+						row = 0;
+						col = 3;
+						break;
+					case "magenta":
+						row = 0;
+						col = 11;
+						break;
+					case "blue":
+						row = 20;
+						col = 13;
+						break;
+					case "green":
+						row = 0;
+						col = 18;
+						break;
+					case "yellow":
+						row = 20;
+						col = 17;
+						break;
+					case "white":
+						row = 20;
+						col = 5;
+						break;
+					default:
+						break;
+				}
+						
+				Player player = new Player(name, color, row, col);
+				playableChars.put(playerArray.get(1), player);
 			}
 			
 		}catch (FileNotFoundException e) {
 			// TODO: Add message
 			e.printStackTrace();
 		}
-		*/
 	}
 	
+	/**
+	 * Loads in weapons to weapon list
+	 * @throws BadConfigFormatException
+	 */
 	public void loadWeaponConfig() throws BadConfigFormatException {
 
-		
-		/*
 		try {
 			FileReader file = new FileReader(weaponConfigFile);
 			
@@ -241,22 +282,43 @@ public final class Board {
 			
 			//Split based on commas with limit equal to 2 commas
 			while(in.hasNextLine()){
-				String temp = in.nextLine();
-				List<String> weaponArray = Arrays.asList(temp.split(", "));
-				
-				String name = weaponArray.get(1);
-				String color = weaponArray.get(2);
+				String weapon = in.nextLine();
+				weapons.add(weapon);
 			}
 			
-		}catch (FileNotFoundException e) {
-			// TODO: Add message
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		}
-		*/
+		} // ADD FORMAT Exc
+		
 	}
 	
+	// Loads in cards from weapons list, legend, and player list
 	public void loadCardDeck() {
-		//Insert all cards
+		
+		// Add all people
+		Set<String> playerKeys = playableChars.keySet();
+		for (String person : playerKeys) {
+			String personName = playableChars.get(person).getPlayerName();
+			Card playerCard = new Card(personName, CardType.PERSON);
+			deck.add(playerCard);
+			
+		}
+		
+		// Add all rooms
+		Set<Character> roomSet = legend.keySet();
+		for (char initial : roomSet) {
+			String roomName = legend.get(initial);
+			Card roomCard = new Card(roomName, CardType.ROOM);
+			deck.add(roomCard);
+			
+		}
+		
+		
+		// Add all weapons
+		for ( String weapon : weapons ) {
+			Card weaponCard = new Card(weapon, CardType.WEAPON);
+			deck.add(weaponCard);
+		}
 	}
 	
 	public void calcAdjacencies() {
@@ -378,22 +440,79 @@ public final class Board {
 		}
 	}
 	
-	private void dealCards() {
+	// Deals cards to all players, starting with solution
+	public void dealCards() {
+		
+		String roomCard = new String();
+		String personCard = new String();
+		String weaponCard = new String();
+		
+		boolean hasRoom = false;
+		boolean hasPerson = false;
+		boolean hasWeapon = false;
 		
 		// 3 cards randomly to each player
 		
 		//while solution is not complete{
 		//pick a random card from the deck
-		//if card is room and room has not been filled, Solution.room = card, remove 
-		//if card is person and person has not been filled, Solution.person = card, remove from deck
-		//if card is weapon and weapon has not been filled, Solution.person = weapon, remove from deck
-		//move on to dealing deack if person, weapon and room are filled
 		
-		//For each player in playable chars
-		//Pick 3 random cards from deck and assign to players hand
-		//remove cards from deck
+		while ( !hasRoom || !hasPerson || !hasWeapon ) {
+			Card next = deck.get((int)(Math.random() * deck.size()));
+			
+			//assign solution based on card type for all
+			if (!hasRoom && next.getCardType() == CardType.ROOM) {
+				roomCard += next.getName();
+				deck.remove(next);
+				hasRoom = true;
+			}
+			else if ( !hasPerson  && next.getCardType() == CardType.PERSON) {
+				personCard += next.getName();
+				deck.remove(next);
+				hasPerson = true;
+			}
+			else if ( !hasWeapon && next.getCardType() == CardType.WEAPON) {
+				weaponCard += next.getName();
+				deck.remove(next);
+				hasWeapon = true;
+			}
+			
+			theSolution = new Solution(roomCard, personCard, weaponCard);
+			//move on to dealing deack if person, weapon and room are filled
+		}
 		
+		// While deck is not empty, assign card at random to a player,
+		// move on to next one. Removes card after assignment
+		
+		while ( deck.size() > 0 ) {
+			// Random card
+			Card random = deck.get((int)(Math.random() * deck.size()));
+
+			// Random card to each person in cyclical order
+			Set<String> playerKeys = playableChars.keySet();
+			for (String person : playerKeys) {
+				playableChars.get(person).getPlayerCards().add(random);
+				deck.remove(random);
+			}
+		}
 	}
+
+	/**
+	 * Color converter to use with player colors
+	 * @param strColor
+	 * @return
+	 */
+	public Color convertColor(String strColor) {
+		Color color;
+		try {
+			// We can use reflection to convert the string to a color
+			Field field = Class.forName("java.awt.Color").getField(strColor.trim());
+			color = (Color)field.get(null);
+		} catch (Exception e) {
+			color = null; // Not defined
+		}
+		return color;
+	}
+
 	
 	/**
 	 * Get targets
@@ -433,18 +552,35 @@ public final class Board {
 		weaponConfigFile = weaponFile;
 	}
 	
+	/**
+	 * Get player of 'color'
+	 * @param color
+	 * @return
+	 */
 	public Player getPlayer(String color) {
 		return playableChars.get(color);
 	}
 	
+	/**
+	 * Get entire map of players
+	 * @return
+	 */
 	public Map<String,Player> getPlayerMap() {
 		return playableChars;
 	}
 	
+	/**
+	 * Get deck
+	 * @return
+	 */
 	public ArrayList<Card> getCardDeck() {
 		return deck;
 	}
 	
+	/**
+	 * Get ArrayList of weapons
+	 * @return
+	 */
 	public ArrayList<String> getWeapons() {
 		return weapons;
 	}

@@ -1,3 +1,8 @@
+/**
+ * @author Jay Harrison
+ * @author Adam Kinard
+ */
+
 package clueGame;
 
 import java.awt.Color;
@@ -36,23 +41,42 @@ public class Player {
 	public Card disproveSuggestion(Solution suggestion) {
 		return new Card();
 	}
-
+	
+	/**
+	 * Name getter
+	 * @return
+	 */
 	public String getPlayerName() {
 		return playerName;
 	}
 
+	/**
+	 * Row getter
+	 * @return
+	 */
 	public int getRow() {
 		return row;
 	}
 
+	/**
+	 * Column getter
+	 * @return
+	 */
 	public int getColumn() {
 		return column;
 	}
 
+	/**
+	 * Color getter
+	 * @return
+	 */
 	public Color getColor() {
 		return color;
 	}
-	
+	/**
+	 * Player's cards getter
+	 * @return
+	 */
 	public Set<Card> getPlayerCards() {
 		return myCards;
 	}

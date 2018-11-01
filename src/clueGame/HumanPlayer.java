@@ -1,3 +1,9 @@
+/**
+ * @author Jay Harrison
+ * @author Adam Kinard
+ * 
+ * HumanPlayer class to be updated with GUI features and monitor IRL player
+ */
 package clueGame;
 
 import java.awt.Color;

@@ -1,3 +1,8 @@
+/**
+ * @author Jay Harrison
+ * @author Adam Kinard
+ */
+
 package clueGame;
 
 import java.io.FileNotFoundException;
@@ -19,12 +24,12 @@ public class BadConfigFormatException extends Exception {
 
 
 	public BadConfigFormatException(String input) {
-		super(input + " is not a valid card type.");
+		super(input + " is not a valid input.");
 		//Used when room config file has an invalid input
 		PrintWriter out;
 		try {
 			out = new PrintWriter("logfile.txt");
-			out.println(input + " is not a valid card type.");
+			out.println(input + " is not a valid input.");
 			out.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

@@ -8,6 +8,7 @@ package tests;
 //Assert.assertEquals
 import static org.junit.Assert.*;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +17,9 @@ import java.util.TreeSet;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import clueGame.Board;
 import clueGame.Card;
@@ -23,20 +27,23 @@ import clueGame.CardType;
 import clueGame.DoorDirection;
 import clueGame.Player;
 
+
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+
 public class gameSetupTests {
 	// Constants to check whether data was loaded correctly
 	public static final int LEGEND_SIZE = 11;
 	public static final int NUM_ROWS = 21;
 	public static final int NUM_COLUMNS = 22;
-	public static final int NUM_ROOMS = 9;
+	public static final int NUM_ROOMS = 11;
 	public static final int NUM_PEOPLE = 6;
 	public static final int NUM_WEAPONS = 6;
-	public static final int TOTAL_CARDS = 21;
+	public static final int TOTAL_CARDS = 23;
 
 	// Left board as static due to suggestion of other test class
 	private static Board board;
 	
-	@BeforeClass
+	@BeforeClass 
 	public static void setUp() {
 		// Board is singleton, get the only instance
 		board = Board.getInstance();
@@ -53,52 +60,52 @@ public class gameSetupTests {
 		Map<String,Player> players = board.getPlayerMap();
 		
 		// Miss Scarlet
-		Player scarlett = board.getPlayer("Scarlett");
-		assertTrue(players.containsKey(scarlett));
-		assertEquals("Miss Scarlet", scarlett.getPlayerName());
-		assertEquals("Red", scarlett.getColor());
+		Player scarlett = board.getPlayer("Red");
+		assertTrue(players.containsValue(scarlett));
+		assertTrue(scarlett.getPlayerName().equals("Miss Scarlett"));
+		assertEquals(Color.red, scarlett.getColor());
 		assertEquals(0, scarlett.getRow());
-		assertEquals(0, scarlett.getColumn());
+		assertEquals(3, scarlett.getColumn());
 		
 		// Mr. Plum
-		Player plum = board.getPlayer("Plum");
-		assertTrue(players.containsKey(plum));
-		assertEquals("Mr. Plum", plum.getPlayerName());
-		assertEquals("Purple", plum.getColor());
+		Player plum = board.getPlayer("Magenta");
+		assertTrue(players.containsValue(plum));
+		assertTrue(plum.getPlayerName().equals("Professor Plum"));
+		assertEquals(Color.magenta, plum.getColor());
 		assertEquals(0, plum.getRow());
-		assertEquals(0, plum.getColumn());
+		assertEquals(11, plum.getColumn());
 		
 		// Mrs. Peacock
-		Player peacock = board.getPlayer("Peacock");
-		assertTrue(players.containsKey(peacock));
-		assertEquals("Mrs. Peacock", peacock.getPlayerName());
-		assertEquals("Blue", peacock.getColor());
-		assertEquals(0, peacock.getRow());
-		assertEquals(0, peacock.getColumn());
+		Player peacock = board.getPlayer("Blue");
+		assertTrue(players.containsValue(peacock));
+		assertTrue(peacock.getPlayerName().equals("Mrs. Peacock"));
+		assertEquals(Color.blue, peacock.getColor());
+		assertEquals(20, peacock.getRow());
+		assertEquals(13, peacock.getColumn());
 		
 		// Reverend Green
 		Player green = board.getPlayer("Green");
-		assertTrue(players.containsKey(green));
-		assertEquals("Mr. Green", green.getPlayerName());
-		assertEquals("Green", green.getColor());
+		assertTrue(players.containsValue(green));
+		assertTrue(green.getPlayerName().equals("Reverend Green"));
+		assertEquals(Color.green, green.getColor());
 		assertEquals(0, green.getRow());
-		assertEquals(0, green.getColumn());
+		assertEquals(18, green.getColumn());
 		
 		//Colonel Mustard
-		Player mustard = board.getPlayer("Mustard");
-		assertTrue(players.containsKey(mustard));
-		assertEquals("Colonel Mustard", mustard.getPlayerName());
-		assertEquals("Yellow", mustard.getColor());
-		assertEquals(0, mustard.getRow());
-		assertEquals(0, mustard.getColumn());
+		Player mustard = board.getPlayer("Yellow");
+		assertTrue(players.containsValue(mustard));
+		assertTrue(mustard.getPlayerName().equals("Colonel Mustard"));
+		assertEquals(Color.yellow, mustard.getColor());
+		assertEquals(20, mustard.getRow());
+		assertEquals(17, mustard.getColumn());
 		
 		// Mrs. White
 		Player white = board.getPlayer("White");
-		assertTrue(players.containsKey(white));
-		assertEquals("Mrs. White", white.getPlayerName());
-		assertEquals("White", white.getColor());
-		assertEquals(0, white.getRow());
-		assertEquals(0, white.getColumn());
+		assertTrue(players.containsValue(white));
+		assertTrue(white.getPlayerName().equals("Mrs. White"));
+		assertEquals(Color.white, white.getColor());
+		assertEquals(20, white.getRow());
+		assertEquals(5, white.getColumn());
 		
 		// Size
 		assertEquals(NUM_PEOPLE, players.size());
@@ -123,7 +130,7 @@ public class gameSetupTests {
 			}
 			else if ( card.getCardType() == CardType.PERSON ) {
 				numPeople++;
-				if ( card.getName().equals("Mrs. White") ) {
+				if ( card.getName().equals("Colonel Mustard") ) {
 					containsPerson = true;
 				}
 			}
@@ -149,10 +156,13 @@ public class gameSetupTests {
 	
 	@Test
 	public void testDealCards() {
+		
+		board.dealCards();
+		
 		ArrayList deck = board.getCardDeck();
 		
 		// Test deck is empty
-		assertEquals(-1, deck.size());
+		assertEquals(0, deck.size());
 		
 		// Test player hands
 		boolean notEnoughCards = false;
@@ -160,7 +170,7 @@ public class gameSetupTests {
 		Set<String> playerKeys = board.getPlayerMap().keySet();
 		for (String key : playerKeys) {
 			Player player = board.getPlayerMap().get(key);
-			if ( (TOTAL_CARDS - 3) / NUM_PEOPLE <= player.getPlayerCards().size() ) {
+			if ( ( (TOTAL_CARDS - 3) / NUM_PEOPLE) >= player.getPlayerCards().size() ) {
 				notEnoughCards = true;
 			}
 		}

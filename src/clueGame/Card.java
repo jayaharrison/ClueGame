@@ -1,3 +1,8 @@
+/**
+ * @author Jay Harrison
+ * @author Adam Kinard
+ */
+
 package clueGame;
 
 public class Card {
@@ -14,22 +19,35 @@ public class Card {
 		this.type = type;
 	}
 	
+	/**
+	 * Equals for cards
+	 * @param name
+	 * @return
+	 */
+	public boolean equals(String name) {
+		return (name == cardName); 
+	}
+	
+	/**
+	 * Card name getter
+	 * @return
+	 */
+	public String getName() {
+		return cardName;
+	}
+	
+	/**
+	 * Card type getter
+	 * @return
+	 */
+	public CardType getCardType() {
+		return type;
+	}
+
+	
 	// FOR TESTING
 	public Card() {
 		cardName = "Card";
 		type = CardType.OTHER;
 	}
-	
-	public boolean equals(String name) {
-		return (name == cardName); 
-	}
-	
-	public String getName() {
-		return cardName;
-	}
-	
-	public CardType getCardType() {
-		return type;
-	}
-
 }
