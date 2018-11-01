@@ -30,16 +30,20 @@ public final class Board {
 	private String boardConfigFile;
 	private String roomConfigFile;
 	private String playerConfigFile;
+	private String weaponConfigFile;
 	
 	private BoardCell[][] board;
 	
-	private Map<Character, String> legend;
 	private Map<BoardCell, Set<BoardCell>> adjMatrix;
 	private Set<BoardCell> targets;
 	private Set<BoardCell> visited;
+	
+	private Map<Character, String> legend;
 	private Map<String,Player> playableChars;
 	private ArrayList<String> weapons;
-	private ArrayList<Card> cardDeck;
+	private ArrayList<Card> deck;
+	
+	private Solution theSolution;
 	
 	// variable used for singleton pattern
 	private static Board theInstance = new Board();
@@ -52,8 +56,9 @@ public final class Board {
 		targets = new HashSet<BoardCell>();
 		visited = new HashSet<BoardCell>();
 		playableChars = new HashMap<String,Player>();
-		cardDeck = new ArrayList<Card>();
 		weapons = new ArrayList<String>();
+		deck = new ArrayList<Card>();
+		
 	}
 	
 	// this method returns the only Board
@@ -81,11 +86,19 @@ public final class Board {
 			// TODO: Add message
 			e2.printStackTrace();
 		}
+		try {
+			loadWeaponConfig();
+		} catch (BadConfigFormatException e3) {
+			// TODO: Add message
+			e3.printStackTrace();
+		}
 		
 		//Calculates room adj
 		calcAdjacencies();
+		dealCards();
 	}
 	
+
 	/**
 	 * Loads room configuration files, throws exception if error is found in file format
 	 * @throws BadConfigFormatException
@@ -217,7 +230,32 @@ public final class Board {
 		*/
 	}
 	
-	public void loadCardDeck() throws BadConfigFormatException {
+	public void loadWeaponConfig() throws BadConfigFormatException {
+
+		
+		/*
+		try {
+			FileReader file = new FileReader(weaponConfigFile);
+			
+			Scanner in = new Scanner(file);
+			
+			//Split based on commas with limit equal to 2 commas
+			while(in.hasNextLine()){
+				String temp = in.nextLine();
+				List<String> weaponArray = Arrays.asList(temp.split(", "));
+				
+				String name = weaponArray.get(1);
+				String color = weaponArray.get(2);
+			}
+			
+		}catch (FileNotFoundException e) {
+			// TODO: Add message
+			e.printStackTrace();
+		}
+		*/
+	}
+	
+	public void loadCardDeck() {
 		//Insert all cards
 	}
 	
@@ -340,6 +378,23 @@ public final class Board {
 		}
 	}
 	
+	private void dealCards() {
+		
+		// 3 cards randomly to each player
+		
+		//while solution is not complete{
+		//pick a random card from the deck
+		//if card is room and room has not been filled, Solution.room = card, remove 
+		//if card is person and person has not been filled, Solution.person = card, remove from deck
+		//if card is weapon and weapon has not been filled, Solution.person = weapon, remove from deck
+		//move on to dealing deack if person, weapon and room are filled
+		
+		//For each player in playable chars
+		//Pick 3 random cards from deck and assign to players hand
+		//remove cards from deck
+		
+	}
+	
 	/**
 	 * Get targets
 	 * @return
@@ -371,10 +426,11 @@ public final class Board {
 	 * @param boardFile
 	 * @param roomFile
 	 */
-	public void setConfigFiles(String boardFile, String roomFile, String playerFile) {
+	public void setConfigFiles(String boardFile, String roomFile, String playerFile, String weaponFile) {
 		boardConfigFile = boardFile;
 		roomConfigFile = roomFile;
 		playerConfigFile = playerFile;
+		weaponConfigFile = weaponFile;
 	}
 	
 	public Player getPlayer(String color) {
@@ -386,7 +442,7 @@ public final class Board {
 	}
 	
 	public ArrayList<Card> getCardDeck() {
-		return cardDeck;
+		return deck;
 	}
 	
 	public ArrayList<String> getWeapons() {

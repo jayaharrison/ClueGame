@@ -20,8 +20,8 @@ public class Card {
 		type = CardType.OTHER;
 	}
 	
-	public boolean equals() {
-		return false; //update later
+	public boolean equals(String name) {
+		return (name == cardName); 
 	}
 	
 	public String getName() {

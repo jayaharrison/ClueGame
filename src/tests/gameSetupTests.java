@@ -28,6 +28,10 @@ public class gameSetupTests {
 	public static final int LEGEND_SIZE = 11;
 	public static final int NUM_ROWS = 21;
 	public static final int NUM_COLUMNS = 22;
+	public static final int NUM_ROOMS = 9;
+	public static final int NUM_PEOPLE = 6;
+	public static final int NUM_WEAPONS = 6;
+	public static final int TOTAL_CARDS = 21;
 
 	// Left board as static due to suggestion of other test class
 	private static Board board;
@@ -37,7 +41,7 @@ public class gameSetupTests {
 		// Board is singleton, get the only instance
 		board = Board.getInstance();
 		// set the file names to use our specific files
-		board.setConfigFiles("ClueRooms.csv", "ClueRooms.txt", "CluePlayers.txt");		
+		board.setConfigFiles("ClueRooms.csv", "ClueRooms.txt", "CluePlayers.txt", "ClueWeapons.txt");		
 		// Initialize will load ALL config files 
 		board.initialize();
 	}
@@ -97,52 +101,71 @@ public class gameSetupTests {
 		assertEquals(0, white.getColumn());
 		
 		// Size
-		assertEquals(6, players.size());
+		assertEquals(NUM_PEOPLE, players.size());
 	}
 	
 	@Test
 	public void testCreateDeck() {
 		//Take all the cards and place into one hashset
-		// Check 2 rooms, 2 players, 2 weapons
-		ArrayList<Card> deck = board.getCardDeck();
 		
-		Set<Card> rooms = new TreeSet<Card>();
-		Set<Card> players = new TreeSet<Card>();
-		Set<Card> weapons = new TreeSet<Card>();
+		boolean containsRoom = false;
+		boolean containsPerson = false;
+		boolean containsWeapon = false;
 		
-		// set up sets
-		for (Card card : deck) {
-			CardType type = card.getCardType();
-			switch (type) {
-			case ROOM:
-				rooms.add(card);
-				break;
-			case PERSON:
-				players.add(card);
-				break;
-			case WEAPON:
-				weapons.add(card);
-				break;
-			default:
-				break;
+		int numRooms = 0, numPeople = 0, numWeapons = 0;
+		
+		for ( Card card : board.getCardDeck() ) {
+			if ( card.getCardType() == CardType.ROOM ) {
+				numRooms++;
+				if ( card.getName().equals("Ballroom") ) {
+					containsRoom = true;
+				}
+			}
+			else if ( card.getCardType() == CardType.PERSON ) {
+				numPeople++;
+				if ( card.getName().equals("Mrs. White") ) {
+					containsPerson = true;
+				}
+			}
+			else if ( card.getCardType() == CardType.WEAPON ) {
+				numWeapons++;
+				if (card.getName().equals("Candlestick") ) {
+					containsWeapon = true;
+				}
 			}
 		}
 		
-		// Sizes
-		assertEquals(9, rooms.size());
-		assertEquals(6, players.size());
-		assertEquals(6, weapons.size());
+		// Test deck sizes
+		assertEquals(NUM_ROOMS, numRooms);
+		assertEquals(NUM_PEOPLE, numPeople);
+		assertEquals(NUM_WEAPONS, numWeapons);
+		assertEquals(TOTAL_CARDS, board.getCardDeck().size());
 		
-		// Test cases
-		assertTrue(deck.contains(board.getPlayer("White")));
-		assertTrue(deck.contains(board.getLegend().containsKey('C')));
-		assertEquals("Candlestick", deck.contains(board.getWeapons().get(0)));
+		// Test for containment
+		assertTrue(containsRoom);
+		assertTrue(containsPerson);
+		assertTrue(containsWeapon);
 	}
 	
 	@Test
 	public void testDealCards() {
-		//randomly pick one of each card (player, weapon, room) to be placed as the solution
-		//randomly sort cards into 7 piles, one for each player and the rest of the cards into the deck
+		ArrayList deck = board.getCardDeck();
+		
+		// Test deck is empty
+		assertEquals(-1, deck.size());
+		
+		// Test player hands
+		boolean notEnoughCards = false;
+		
+		Set<String> playerKeys = board.getPlayerMap().keySet();
+		for (String key : playerKeys) {
+			Player player = board.getPlayerMap().get(key);
+			if ( (TOTAL_CARDS - 3) / NUM_PEOPLE <= player.getPlayerCards().size() ) {
+				notEnoughCards = true;
+			}
+		}
+		
+		assertFalse(notEnoughCards);
 	}
 }
 	

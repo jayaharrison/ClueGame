@@ -21,7 +21,7 @@ public class CTest_ExceptionTests {
 		// Note that we are using a LOCAL Board variable, because each 
 		// test will load different files
 		Board board = Board.getInstance();
-		board.setConfigFiles("CTest_ClueLayoutBadColumns.csv", "CTest_ClueLegend.txt", "CluePlayers.txt");
+		board.setConfigFiles("CTest_ClueLayoutBadColumns.csv", "CTest_ClueLegend.txt", "CluePlayers.txt", "ClueWeapons.txt");
 		// Instead of initialize, we call the two load functions directly.
 		// This is necessary because initialize contains a try-catch. 
 		board.loadRoomConfig();
@@ -34,7 +34,7 @@ public class CTest_ExceptionTests {
 	@Test (expected = BadConfigFormatException.class)
 	public void testBadRoom() throws BadConfigFormatException, FileNotFoundException {
 		Board board = Board.getInstance();
-		board.setConfigFiles("CTest_ClueLayoutBadRoom.csv", "CTest_ClueLegend.txt", "CluePlayers.txt");
+		board.setConfigFiles("CTest_ClueLayoutBadRoom.csv", "CTest_ClueLegend.txt", "CluePlayers.txt", "ClueWeapons.txt");
 		board.loadRoomConfig();
 		board.loadBoardConfig();
 	}
@@ -44,7 +44,7 @@ public class CTest_ExceptionTests {
 	@Test (expected = BadConfigFormatException.class)
 	public void testBadRoomFormat() throws BadConfigFormatException, FileNotFoundException {
 		Board board = Board.getInstance();
-		board.setConfigFiles("CTest_ClueLayout.csv", "CTest_ClueLegendBadFormat.txt", "CluePlayers.txt");
+		board.setConfigFiles("CTest_ClueLayout.csv", "CTest_ClueLegendBadFormat.txt", "CluePlayers.txt", "ClueWeapons.txt");
 		board.loadRoomConfig();
 	}
 
