@@ -80,4 +80,9 @@ public class Player {
 	public Set<Card> getPlayerCards() {
 		return myCards;
 	}
+	
+	public void move(int row, int column) {
+		this.row = row;
+		this.column = column;
+	}
 }

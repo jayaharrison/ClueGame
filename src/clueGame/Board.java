@@ -46,6 +46,7 @@ public final class Board {
 	private ArrayList<String> weapons;
 	
 	private ArrayList<Card> deck;
+	private ArrayList<Player> players;
 	
 	private Solution theSolution;
 	
@@ -447,6 +448,10 @@ public final class Board {
 		String personCard = new String();
 		String weaponCard = new String();
 		
+		Card roomSolution;
+		Card personSolution;
+		Card weaponSolution;
+		
 		boolean hasRoom = false;
 		boolean hasPerson = false;
 		boolean hasWeapon = false;
@@ -476,7 +481,11 @@ public final class Board {
 				hasWeapon = true;
 			}
 			
-			theSolution = new Solution(roomCard, personCard, weaponCard);
+			roomSolution = new Card(roomCard, CardType.ROOM);
+			personSolution = new Card(personCard, CardType.PERSON);
+			weaponSolution = new Card(weaponCard, CardType.WEAPON);
+			
+			setSolution(new Solution(roomSolution, personSolution, weaponSolution));
 			//move on to dealing deack if person, weapon and room are filled
 		}
 		
@@ -568,6 +577,14 @@ public final class Board {
 	public Map<String,Player> getPlayerMap() {
 		return playableChars;
 	}
+	/**
+	 * Get all Players
+	 * @return
+	 */
+	
+	public ArrayList<Player> getPlayers(){
+		return players;
+	}
 	
 	/**
 	 * Get deck
@@ -583,6 +600,20 @@ public final class Board {
 	 */
 	public ArrayList<String> getWeapons() {
 		return weapons;
+	}
+	
+	/**
+	 * Return players that are controlled by Computer
+	 * @return
+	 */
+	public ArrayList<ComputerPlayer> getComputerPlayers(){
+		ArrayList<ComputerPlayer> compPlayers = new ArrayList<ComputerPlayer>();
+		for (Player p : players) {
+			if (p.getClass() == ComputerPlayer.class)
+				compPlayers.add((ComputerPlayer) p);
+		}
+		
+		return compPlayers;
 	}
 	
 	/**
@@ -610,5 +641,19 @@ public final class Board {
 	public BoardCell getCellAt(int row, int col) {
 		return board[row][col];
 	}
+	
+	public void setSolution(Solution theSolution) {
+		this.theSolution = theSolution;
+	}
+	
+	public Solution getSolution() {
+		return theSolution;
+	}
+
+	public boolean checkAccusaton(Solution accusation) {
+		//accusation.equals(theSolution)
+		return false;
+	}
+
 	
 }
