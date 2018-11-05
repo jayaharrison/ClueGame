@@ -32,11 +32,14 @@ public class BadConfigFormatException extends Exception {
 			out.println(input + " is not a valid input.");
 			out.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			e.getMessage();
 		}
 		
 	}
 
-	
+	public String getMessage() {
+		String message = "There is an error with one of your Config File";
+		return message;
+	}
 	
 }

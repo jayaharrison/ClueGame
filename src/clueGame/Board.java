@@ -43,7 +43,7 @@ public final class Board {
 	
 	private Map<Character, String> legend;
 	private Map<String,Player> playableChars;
-	private ArrayList<String> weapons;
+	private Set<Card> weapons;
 	
 	private ArrayList<Card> deck;
 	private ArrayList<Player> players;
@@ -61,7 +61,7 @@ public final class Board {
 		targets = new HashSet<BoardCell>();
 		visited = new HashSet<BoardCell>();
 		playableChars = new HashMap<String,Player>();
-		weapons = new ArrayList<String>();
+		weapons = new HashSet<Card>();
 		deck = new ArrayList<Card>();
 		
 	}
@@ -76,26 +76,22 @@ public final class Board {
 		try {
 			loadRoomConfig();
 		} catch (BadConfigFormatException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e1.getMessage();
 		}
 		try {
 			loadBoardConfig();
 		} catch (BadConfigFormatException e) {
-			// TODO: Add message
-			e.printStackTrace();
+			e.getMessage();
 		}
 		try {
 			loadPlayerConfig();
 		} catch (BadConfigFormatException e2) {
-			// TODO: Add message
-			e2.printStackTrace();
+			e2.getMessage();
 		}
 		try {
 			loadWeaponConfig();
 		} catch (BadConfigFormatException e3) {
-			// TODO: Add message
-			e3.printStackTrace();
+			e3.getMessage();
 		}
 		
 		//Calculates room adj
@@ -284,7 +280,7 @@ public final class Board {
 			//Split based on commas with limit equal to 2 commas
 			while(in.hasNextLine()){
 				String weapon = in.nextLine();
-				weapons.add(weapon);
+				weapons.add(new Card(weapon, CardType.WEAPON));
 			}
 			
 		} catch (FileNotFoundException e) {
@@ -316,10 +312,7 @@ public final class Board {
 		
 		
 		// Add all weapons
-		for ( String weapon : weapons ) {
-			Card weaponCard = new Card(weapon, CardType.WEAPON);
-			deck.add(weaponCard);
-		}
+			deck.addAll(weapons);
 	}
 	
 	public void calcAdjacencies() {
@@ -598,7 +591,7 @@ public final class Board {
 	 * Get ArrayList of weapons
 	 * @return
 	 */
-	public ArrayList<String> getWeapons() {
+	public Set<Card>getWeapons() {
 		return weapons;
 	}
 	

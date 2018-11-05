@@ -60,4 +60,10 @@ public class ComputerPlayer extends Player {
 		return seenWeapons;
 	}
 
+
+	public void revealCard(Card weapon) {
+		
+		
+	}
+
 }
