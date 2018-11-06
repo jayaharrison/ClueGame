@@ -50,7 +50,7 @@ public final class Board {
 	
 	
 	private ArrayList<Card> deck;
-	//private Map<Player> players;
+	private ArrayList<Card> allCards;
 	
 	private Solution theSolution;
 	
@@ -69,6 +69,7 @@ public final class Board {
 		weapons = new HashSet<Card>();
 		rooms = new HashSet<Card>();
 		deck = new ArrayList<Card>();
+		allCards = new ArrayList<Card>();
 		
 	}
 	
@@ -298,18 +299,20 @@ public final class Board {
 		
 		// Add all people
 			deck.addAll(people);
+			allCards.addAll(people);
 		
 		// Add all rooms
 			deck.addAll(rooms);
+			allCards.addAll(rooms);
 		
 		
 		// Add all weapons
 			deck.addAll(weapons);
+			allCards.addAll(weapons);
 			
 			for (Card c : deck) {
 				System.out.println(c.getName());
 			}
-			
 	}
 	
 	public void calcAdjacencies() {
@@ -494,6 +497,7 @@ public final class Board {
 				deck.remove(random);
 			}
 		}
+		
 	}
 
 
@@ -624,6 +628,10 @@ public final class Board {
 	public boolean checkAccusaton(Solution accusation) {
 		//accusation.equals(theSolution)
 		return false;
+	}
+
+	public ArrayList<Card> getAllCards() {
+		return allCards;
 	}
 
 	

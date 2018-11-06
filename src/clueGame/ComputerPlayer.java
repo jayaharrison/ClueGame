@@ -13,6 +13,7 @@ import java.util.Set;
 public class ComputerPlayer extends Player {
 	
 	private char lastRoom;
+	private Solution suggestion;
 	
 	public ComputerPlayer(String playerName, String color, int row, int column) {
 		super(playerName, color, row, column);
@@ -55,13 +56,22 @@ public class ComputerPlayer extends Player {
 	
 	@Override
 	public void createSuggestion() {
-		// creates suggestion based on seen/unseen cards
+		
+		Card room = new Card("Walkway", CardType.ROOM);
+		Card player = new Card("Adam", CardType.PERSON);
+		Card weapon = new Card("Candle", CardType.WEAPON);
+		suggestion = new Solution(room, player, weapon);
 	}
+	
+	public Solution getSuggestion() {
+		return suggestion;
+	}
+
 	
 	@Override
 	public Card disproveSuggestion(Solution suggestion) {
 		//TODO
-		return null;
+		return new Card();
 	}
 	
 	public Set<Card> getSeenPeople(){

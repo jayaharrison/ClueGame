@@ -181,94 +181,76 @@ public class gameActionTests {
 	@Test
 	public void createSuggestionTest() {
 		// Create player in Ballroom doorway
-		ComputerPlayer player = new ComputerPlayer();
-		player.move(13, 1);
-		
-		
-		
-		//ArrayList<ComputerPlayer> players = board.getComputerPlayers();
+		//Assure room matches current location
+		ComputerPlayer player = new ComputerPlayer("Miss Scarlett", "red", 13, 1);
+		player.createSuggestion();
+		Solution suggestion = player.getSuggestion();
 
-		//Room matches current location
-		for (ComputerPlayer p: players) {
-			if (p.getPlayerName().equals("Professor Plum")) {
-				p.move(2, 13); //moves to doorway of tool closet
-				p.setCurrentRoom(board.getCellAt(2, 13));
-				p.createSuggestion();
-				Solution suggestion = p.getSuggestion();
-				assertTrue(p.getSuggestion().getRoom().getName().equals("Tool Closet"));
-
-				p.setSeen(new HashSet<Card>()); //creates empty hashset to be filled with seen cards
-			}
-
-//				//if only one weapon not seen, its selected
-				Set<Card> weapons = new HashSet<Card>();//puts all game weapons into a set
-				weapons.addAll(board.getWeapons());
-				Card weapon1 = null;
-				Card weapon2 = null;
-				int i = weapons.size();
-			
+		assertTrue(suggestion.getRoom().getName().equals("Ballroom"));
 				
+		Set<Card> seenList = new HashSet<Card>();
 
-				//if multiple weapons not seen, one of them is randomly selected
-				int seen1 = 0;
-				int seen2 = 0;
-				for (i = 0; i < 10; i++) {
-					p.createSuggestion();
-					suggestion = p.getSuggestion();
-					if(suggestion.getWeapon().equals(weapon1)) seen1++;
-					if(suggestion.getWeapon().equals(weapon2)) seen2++;	
-				}
-				assertTrue(seen1 > 0);
-				assertTrue(seen2 > 0);
+		//if only one weapon not seen, its selected
+		Set<Card> weapons = new HashSet<Card>();
+		weapons.addAll(board.getWeapons());//puts all game weapons into a set
 
-				p.revealCard(weapon2);
-				p.createSuggestion();
-				suggestion = p.getSuggestion();
-				assertEquals(suggestion.getWeapon(), weapon1);
-
+		for (Card w : weapons){
+			seenList.add(w);
+			if(w.getName().equals("Wrench")) {
+				seenList.remove(w);
 			}
-
-
-			//if only one person not seen, its selected (can be same test as weapon)
-			Set<Card> people = new HashSet<Card>();//puts all game weapons into a set
-			people.addAll(board.getWeapons());
-			Card person1 = null;
-			Card person2 = null;
-			int i = people.size();
-			for (Card person : people) {
-				if (i == 1) {
-					person1 = person;
-				}
-				else if (i == 2) {
-					person2 = person;
-				}
-				else {
-					p.revealCard(person);
-				}
-				i--;
-			}
-
-			//if multiple persons not seen, one of them is randomly selected
-			int seen1 = 0;
-			int seen2 = 0;
-			for (i = 0; i < 10; i++) {
-				p.createSuggestion();
-				Solution suggestion1 = p.getSuggestion();
-				if(suggestion1.getWeapon().equals(person1)) seen1++;
-				if(suggestion1.getWeapon().equals(person1)) seen2++;	
-			}
-			assertTrue(seen1 > 0);
-			assertTrue(seen2 > 0);
-
-			p.revealCard(person1);
-			p.createSuggestion();
-			Solution suggestion2 = p.getSuggestion();
-			assertEquals(suggestion2.getWeapon(), person2);
-
 		}
+
+		assertTrue(suggestion.getWeapon().getName().equals("Wrench"));
+
+		//if only one person not seen, its selected
+		Set<Card> people = new HashSet<Card>();
+		people.addAll(board.getPeople());
+
+		for (Card p : people) {
+			seenList.add(p);
+			if(p.getName().equals("Colonel Mustard")) {
+				seenList.remove(p);
+			}
+		}
+		assertTrue(suggestion.getPerson().getName().equals("Colonel Mustard"));
+
+		//if multiple weapons not seen, one of them is randomly selected
+		seenList.removeAll(weapons);
+
+		Set<Card> weaponsGuessed = new HashSet<Card>();
+
+		// generates set without dupes of all weapons
+		for (int i=0; i<100; i++) {
+			Solution suggestion1 = player.getSuggestion();
+			weaponsGuessed.add(suggestion1.getWeapon());
+		}
+
+		assertTrue(weaponsGuessed.equals(weapons));
+
+
+
+		//if multiple persons not seen, one of them is randomly selected
+		seenList.removeAll(people);
+		seenList.add(board.getAllCards().get(2)); //Miss Scarlett
+		seenList.add(board.getAllCards().get(0)); //Professor Plum
+
+
+		Set<Card> peopleGuessed = new HashSet<Card>();
+
+		for (int i=0; i<100; i++) {
+			Solution suggestion2 = player.getSuggestion();
+			peopleGuessed.add(suggestion2.getPerson());
+		}
+		assertFalse(peopleGuessed.contains(board.getAllCards().get(0)));
+		assertTrue(peopleGuessed.contains(board.getAllCards().get(1)));
+		assertFalse(peopleGuessed.contains(board.getAllCards().get(2)));
+		assertTrue(peopleGuessed.contains(board.getAllCards().get(3)));
+		assertTrue(peopleGuessed.contains(board.getAllCards().get(4)));
+		assertTrue(peopleGuessed.contains(board.getAllCards().get(5)));
 	}
-	
-	
+
+
 	/**
 	 * Disproves a suggestion that a Player makes
 	 */
@@ -279,13 +261,13 @@ public class gameActionTests {
 		Set<Card> hand = new HashSet<Card>();
 		
 		//Professor Plum
-		Card person = board.getCardDeck().get(0);
+		Card person = board.getAllCards().get(0);
 		hand.add(person);
 		//Dining Room
-		Card room = board.getCardDeck().get(6);
+		Card room = board.getAllCards().get(6);
 		hand.add(room);
 		//Wrench
-		Card weapon = board.getCardDeck().get(20);
+		Card weapon = board.getAllCards().get(20);
 		hand.add(weapon);
 		
 		player.setHand(hand);
@@ -317,6 +299,25 @@ public class gameActionTests {
 		
 		
 		//if player has no matching cards, null is returned
+		
+		//Clear hand, change cards to not match
+		hand.clear();
+		//White
+		Card person1 = board.getAllCards().get(1);
+		hand.add(person);
+		//Ballroom
+		Card room1 = board.getAllCards().get(7);
+		hand.add(room);
+		//Revolver
+		Card weapon1 = board.getAllCards().get(19);
+		hand.add(weapon);
+
+		player.setHand(hand);
+		
+		//Should return null now if suggestion remains the same as before
+		Card card = player.disproveSuggestion(suggestion);
+		assertEquals(null, card);
+		
 	}
 	
 	/**
@@ -324,6 +325,26 @@ public class gameActionTests {
 	 */
 	@Test
 	public void handleSuggestionTest() {
+		
+		//solution that is correct
+				Solution accusation = board.getSolution();
+				assertTrue(board.checkAccusaton(accusation));
+				
+				//solution with wrong person
+				accusation.setPerson(new Card("Adam", CardType.PERSON));
+				assertTrue(board.checkAccusaton(accusation));
+				
+				//solution with wrong weapon
+				accusation = board.getSolution();
+				accusation.setWeapon(new Card("AK47", CardType.WEAPON));
+				assertTrue(board.checkAccusaton(accusation));
+				
+				//solution with wrong room
+				accusation = board.getSolution();
+				accusation.setRoom(new Card("Basement", CardType.ROOM));
+				assertTrue(board.checkAccusaton(accusation));
+				
+		
 		
 		//Suggestion no one can disprove returns null
 		
