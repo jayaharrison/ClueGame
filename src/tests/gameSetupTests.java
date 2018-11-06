@@ -170,7 +170,7 @@ public class gameSetupTests {
 		Set<String> playerKeys = board.getPlayerMap().keySet();
 		for (String key : playerKeys) {
 			Player player = board.getPlayerMap().get(key);
-			if ( ( (TOTAL_CARDS - 3) / NUM_PEOPLE) >= player.getPlayerCards().size() ) {
+			if ( ( (TOTAL_CARDS - 3) / NUM_PEOPLE) >= player.getHand().size() ) {
 				notEnoughCards = true;
 			}
 		}

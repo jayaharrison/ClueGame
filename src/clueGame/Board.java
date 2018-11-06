@@ -41,12 +41,16 @@ public final class Board {
 	private Set<BoardCell> targets;
 	private Set<BoardCell> visited;
 	
+
 	private Map<Character, String> legend;
-	private Map<String,Player> playableChars;
+	private Map<String,Player> players; //Each playable chracter contains a Player attribute and Card(their hand)
 	private Set<Card> weapons;
+	private Set<Card> rooms;
+	private Set<Card> people;
+	
 	
 	private ArrayList<Card> deck;
-	private ArrayList<Player> players;
+	//private Map<Player> players;
 	
 	private Solution theSolution;
 	
@@ -60,8 +64,10 @@ public final class Board {
 		adjMatrix = new HashMap<BoardCell, Set<BoardCell>>();
 		targets = new HashSet<BoardCell>();
 		visited = new HashSet<BoardCell>();
-		playableChars = new HashMap<String,Player>();
+		players = new HashMap<String, Player>();
+		people = new HashSet<Card>();
 		weapons = new HashSet<Card>();
+		rooms = new HashSet<Card>();
 		deck = new ArrayList<Card>();
 		
 	}
@@ -99,7 +105,7 @@ public final class Board {
 		loadCardDeck();
 		
 		// Can't call when testing, will remove cards from deck permanently
-		//dealCards();
+		dealCards();
 	}
 	
 
@@ -126,15 +132,15 @@ public final class Board {
 				String cardType = legendArray.get(2);
 
 				if(!cardType.equals("Other") && !cardType.equals("Card")) {
-					// TODO: Add message, pass stuff
 					throw new BadConfigFormatException();
 				}
 				legend.put(key, value);
+				if(cardType.equals("Card")) rooms.add(new Card(value, CardType.ROOM));	
+				
 			}
 			
 		}catch (FileNotFoundException e) {
-			// TODO: Add message
-			e.printStackTrace();
+			e.getMessage();
 		}
 	}
 	
@@ -204,8 +210,7 @@ public final class Board {
 			}
 			numRows = rowCount;
 		} catch (FileNotFoundException e) {
-			// TODO: Add message
-			e.printStackTrace();
+			e.getMessage();
 		}
 	}
 	
@@ -221,13 +226,12 @@ public final class Board {
 				List<String> playerArray = Arrays.asList(temp.split(", "));
 				
 				String name = playerArray.get(0);
-				String charColor = playerArray.get(1).toLowerCase();
-				Color color = convertColor(charColor);
+				String color = playerArray.get(1).toLowerCase();
 				
 				
 				// Switch for start loc
 				int row = 0, col = 0; 
-				switch( charColor ) {
+				switch( color ) {
 					case "red":
 						row = 0;
 						col = 3;
@@ -257,12 +261,12 @@ public final class Board {
 				}
 						
 				Player player = new Player(name, color, row, col);
-				playableChars.put(playerArray.get(1), player);
+				players.put(name, player);
+				people.add(new Card(name, CardType.PERSON));
 			}
 			
 		}catch (FileNotFoundException e) {
-			// TODO: Add message
-			e.printStackTrace();
+			e.getMessage();
 		}
 	}
 	
@@ -284,8 +288,8 @@ public final class Board {
 			}
 			
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} // ADD FORMAT Exc
+			e.getMessage();
+		}
 		
 	}
 	
@@ -293,26 +297,19 @@ public final class Board {
 	public void loadCardDeck() {
 		
 		// Add all people
-		Set<String> playerKeys = playableChars.keySet();
-		for (String person : playerKeys) {
-			String personName = playableChars.get(person).getPlayerName();
-			Card playerCard = new Card(personName, CardType.PERSON);
-			deck.add(playerCard);
-			
-		}
+			deck.addAll(people);
 		
 		// Add all rooms
-		Set<Character> roomSet = legend.keySet();
-		for (char initial : roomSet) {
-			String roomName = legend.get(initial);
-			Card roomCard = new Card(roomName, CardType.ROOM);
-			deck.add(roomCard);
-			
-		}
+			deck.addAll(rooms);
 		
 		
 		// Add all weapons
 			deck.addAll(weapons);
+			
+			for (Card c : deck) {
+				System.out.println(c.getName());
+			}
+			
 	}
 	
 	public void calcAdjacencies() {
@@ -473,15 +470,16 @@ public final class Board {
 				deck.remove(next);
 				hasWeapon = true;
 			}
-			
-			roomSolution = new Card(roomCard, CardType.ROOM);
-			personSolution = new Card(personCard, CardType.PERSON);
-			weaponSolution = new Card(weaponCard, CardType.WEAPON);
-			
-			setSolution(new Solution(roomSolution, personSolution, weaponSolution));
-			//move on to dealing deack if person, weapon and room are filled
 		}
-		
+
+		roomSolution = new Card(roomCard, CardType.ROOM);
+		personSolution = new Card(personCard, CardType.PERSON);
+		weaponSolution = new Card(weaponCard, CardType.WEAPON);
+
+		setSolution(new Solution(roomSolution, personSolution, weaponSolution));
+		//move on to dealing deack if person, weapon and room are filled
+
+
 		// While deck is not empty, assign card at random to a player,
 		// move on to next one. Removes card after assignment
 		
@@ -490,30 +488,14 @@ public final class Board {
 			Card random = deck.get((int)(Math.random() * deck.size()));
 
 			// Random card to each person in cyclical order
-			Set<String> playerKeys = playableChars.keySet();
+			Set<String> playerKeys = players.keySet();
 			for (String person : playerKeys) {
-				playableChars.get(person).getPlayerCards().add(random);
+				players.get(person).getHand().add(random);
 				deck.remove(random);
 			}
 		}
 	}
 
-	/**
-	 * Color converter to use with player colors
-	 * @param strColor
-	 * @return
-	 */
-	public Color convertColor(String strColor) {
-		Color color;
-		try {
-			// We can use reflection to convert the string to a color
-			Field field = Class.forName("java.awt.Color").getField(strColor.trim());
-			color = (Color)field.get(null);
-		} catch (Exception e) {
-			color = null; // Not defined
-		}
-		return color;
-	}
 
 	
 	/**
@@ -560,7 +542,7 @@ public final class Board {
 	 * @return
 	 */
 	public Player getPlayer(String color) {
-		return playableChars.get(color);
+		return players.get(color);
 	}
 	
 	/**
@@ -568,15 +550,15 @@ public final class Board {
 	 * @return
 	 */
 	public Map<String,Player> getPlayerMap() {
-		return playableChars;
+		return players;
 	}
 	/**
 	 * Get all Players
 	 * @return
 	 */
 	
-	public ArrayList<Player> getPlayers(){
-		return players;
+	public Set<Card> getPeople(){
+		return people;
 	}
 	
 	/**
@@ -601,10 +583,6 @@ public final class Board {
 	 */
 	public ArrayList<ComputerPlayer> getComputerPlayers(){
 		ArrayList<ComputerPlayer> compPlayers = new ArrayList<ComputerPlayer>();
-		for (Player p : players) {
-			if (p.getClass() == ComputerPlayer.class)
-				compPlayers.add((ComputerPlayer) p);
-		}
 		
 		return compPlayers;
 	}

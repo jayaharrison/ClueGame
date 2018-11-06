@@ -15,7 +15,7 @@ public class ComputerPlayer extends Player {
 	Set<Card> seen = new HashSet<Card>();
 	
 	
-	public ComputerPlayer(String playerName, Color color, int row, int column) {
+	public ComputerPlayer(String playerName, String color, int row, int column) {
 		super(playerName, color, row, column);
 	}
 	
@@ -63,6 +63,11 @@ public class ComputerPlayer extends Player {
 
 	public void revealCard(Card weapon) {
 		
+		
+	}
+	
+	@Override
+	public void move(int row, int column) {
 		
 	}
 
