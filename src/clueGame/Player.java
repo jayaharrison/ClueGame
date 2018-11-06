@@ -17,8 +17,8 @@ public class Player {
 	private int column;
 	private String color;
 	
-	private Set<Card> hand;
-	private Set<Card> seen;
+	protected Set<Card> hand;
+	protected Set<Card> seen;
 	
 	/**
 	 * Player constructor including name, color, and position
@@ -32,8 +32,14 @@ public class Player {
 		this.color = color;
 		this.row = row;
 		this.column = column;
-		hand = new HashSet<Card>();
+		
 		seen = new HashSet<Card>();
+		hand = new HashSet<Card>();
+	}
+	
+	public Player() {
+		seen = new HashSet<Card>();
+		hand = new HashSet<Card>();
 	}
 	
 	/**
@@ -42,9 +48,33 @@ public class Player {
 	 * @return
 	 */
 	public Card disproveSuggestion(Solution suggestion) {
-		return new Card();
+		return null;
 	}
 	
+	public void createSuggestion() {}
+	
+	/**
+	 * Moves a player to a specific location
+	 * @param row
+	 * @param column
+	 */
+	public void move(int row, int column) {
+		this.row = row;
+		this.column = column;
+		
+		// Lets human choose from target list
+		
+		// comp will randomly select from target list
+	}
+
+	public BoardCell pickLocation(Set<BoardCell> targets) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	
+	// GETTERS & SETTERS
 	/**
 	 * Name getter
 	 * @return
@@ -105,6 +135,7 @@ public class Player {
 	public Set<Card> getHand() {
 		return hand;
 	}
+	
 	/**
 	 * Player's seen cards getter
 	 * @return
@@ -112,17 +143,14 @@ public class Player {
 	public Set<Card> getSeen(){
 		return seen;
 	}
-	/**
-	 * Moves a player to a specific location
-	 * @param row
-	 * @param column
-	 */
-	public void move(int row, int column) {
-		this.row = row;
-		this.column = column;
-		
-		// Lets human choose from target list
-		
-		// comp will randomly select from target list
+	
+	public void addCardToHand(Card card) {
+		hand.add(card);
 	}
+	
+	
+	public void addCardToSeen(Card card) {
+		seen.add(card);
+	}
+	
 }

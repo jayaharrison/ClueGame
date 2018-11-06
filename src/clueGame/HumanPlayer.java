@@ -18,8 +18,12 @@ public class HumanPlayer extends Player {
 	 * @param row
 	 * @param column
 	 */
-	public HumanPlayer(String playerName, Color color, int row, int column) {
+	public HumanPlayer(String playerName, String color, int row, int column) {
 		super(playerName, color, row, column);
+	}
+	
+	public HumanPlayer() {
+		super();
 	}
 	
 	/**

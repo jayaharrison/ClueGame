@@ -54,15 +54,99 @@ public class gameActionTests {
 	
 	@Test
 	public void selectTargetLocationTest() {
+		// Make computerPlayer
+		ComputerPlayer player = new ComputerPlayer();
 		
-		//if no rooms in list, select randomly
+		// Test with 2 moves, no rooms
+		board.calcTargets(8, 7, 2);
+		boolean loc_06_07 = false;
+		boolean loc_10_07 = false;
+		boolean loc_09_06 = false;
+		boolean loc_07_05 = false;
+		boolean loc_08_05 = false;
+	
+		for (int i=0; i<100; i++) {
+			BoardCell selected = player.pickLocation(board.getTargets());
+			if (selected == board.getCellAt(6, 7))
+				loc_06_07 = true;
+			else if (selected == board.getCellAt(10, 7))
+				loc_10_07 = true;
+			else if (selected == board.getCellAt(9, 6))
+				loc_09_06 = true;
+			else if (selected == board.getCellAt(7, 6))
+				loc_07_05 = true;
+			else if (selected == board.getCellAt(8, 5))
+				loc_08_05 = true;
+			else
+				fail("Invalid target selected");
+		}
+		// Ensure targets were picked
+		assertTrue(loc_06_07);
+		assertTrue(loc_10_07);
+		assertTrue(loc_09_06);
+		assertTrue(loc_07_05);
+		assertTrue(loc_08_05);
 		
 		
-		//if room in list that was not just visited, must select it
+		// Test with 4 moves, room every time
+		board.calcTargets(20, 5, 4);
+		boolean loc_19_05 = false;
+		boolean loc_18_05 = false;
+		boolean loc_17_05 = false;
+		boolean loc_16_05 = false;
+		boolean door_1 = false;
+		boolean door_2 = false;
+		
+		for (int i=0; i<100; i++) {
+			BoardCell selected = player.pickLocation(board.getTargets());
+			if (selected == board.getCellAt(19, 5))
+				loc_19_05 = true;
+			if (selected == board.getCellAt(18, 5))
+				loc_18_05 = true;
+			if (selected == board.getCellAt(17, 5))
+				loc_17_05 = true;
+			if (selected == board.getCellAt(16, 5))
+				loc_16_05 = true;
+			if (selected == board.getCellAt(17, 4))
+				door_1 = true;
+			if (selected == board.getCellAt(18, 4))
+				door_2 = true;
+		}
+		
+		// Ensure doors were picked
+		assertTrue(door_1 || door_2);
+		assertFalse(loc_19_05);
+		assertFalse(loc_18_05);
+		assertFalse(loc_17_05);
+		assertFalse(loc_16_05);
 		
 		
-		//if room just visited is in list, each target (including room) selected randomly
+		// Test last visited room, 1 move
+		board.calcTargets(14, 1, 1);
+		player.setLastRoom('B');
 		
+		boolean door = false;
+		boolean loc_14_00 = false;
+		boolean loc_14_02 = false;
+		boolean loc_15_01 = false;
+		
+		for (int i=0; i<100; i++) {
+			BoardCell selected = player.pickLocation(board.getTargets());
+			if (selected == board.getCellAt(13, 1))
+				door = true;
+			if (selected == board.getCellAt(14, 0))
+				loc_14_00 = true;
+			if (selected == board.getCellAt(14, 2))
+				loc_14_02 = true;
+			if (selected == board.getCellAt(15, 1))
+				loc_15_01 = true;
+		}
+		
+		// Ensure all targets chosen
+		assertTrue(door);
+		assertTrue(loc_14_00);
+		assertTrue(loc_14_02);
+		assertTrue(loc_15_01);
 	}
 	
 	/**
@@ -96,7 +180,13 @@ public class gameActionTests {
 	 */
 	@Test
 	public void createSuggestionTest() {
-		ArrayList<ComputerPlayer> players = board.getComputerPlayers();
+		// Create player in Ballroom doorway
+		ComputerPlayer player = new ComputerPlayer();
+		player.move(13, 1);
+		
+		
+		
+		//ArrayList<ComputerPlayer> players = board.getComputerPlayers();
 
 		//Room matches current location
 		for (ComputerPlayer p: players) {
@@ -111,76 +201,71 @@ public class gameActionTests {
 			}
 
 //				//if only one weapon not seen, its selected
-//				Set<Card> weapons = new HashSet<Card>();//puts all game weapons into a set
-//				weapons.addAll(board.getWeapons());
-//				Card weapon1 = null;
-//				Card weapon2 = null;
-//				int i = weapons.size();
-//			
-//				
-//
-//				//if multiple weapons not seen, one of them is randomly selected
-//				int seen1 = 0;
-//				int seen2 = 0;
-//				for (i = 0; i < 10; i++) {
-//					p.createSuggestion();
-//					suggestion = p.getSuggestion();
-//					if(suggestion.getWeapon().equals(weapon1)) seen1++;
-//					if(suggestion.getWeapon().equals(weapon2)) seen2++;	
-//				}
-//				assertTrue(seen1 > 0);
-//				assertTrue(seen2 > 0);
-//
-//				p.revealCard(weapon2);
-//				p.createSuggestion();
-//				suggestion = p.getSuggestion();
-//				assertEquals(suggestion.getWeapon(), weapon1);
-//
-//			}
-//
-//
-//			//if only one person not seen, its selected (can be same test as weapon)
-//			Set<Card> people = new HashSet<Card>();//puts all game weapons into a set
-//			people.addAll(board.getWeapons());
-//			Card person1 = null;
-//			Card person2 = null;
-//			int i = people.size();
-//			for (Card person : people) {
-//				if (i == 1) {
-//					person1 = person;
-//				}
-//				else if (i == 2) {
-//					person2 = person;
-//				}
-//				else {
-//					p.revealCard(person);
-//				}
-//				i--;
-//			}
-//
-//			//if multiple persons not seen, one of them is randomly selected
-//			int seen1 = 0;
-//			int seen2 = 0;
-//			for (i = 0; i < 10; i++) {
-//				p.createSuggestion();
-//				Solution suggestion1 = p.getSuggestion();
-//				if(suggestion1.getWeapon().equals(person1)) seen1++;
-//				if(suggestion1.getWeapon().equals(person1)) seen2++;	
-//			}
-//			assertTrue(seen1 > 0);
-//			assertTrue(seen2 > 0);
-//
-//			p.revealCard(person1);
-//			p.createSuggestion();
-//			Solution suggestion2 = p.getSuggestion();
-//			assertEquals(suggestion2.getWeapon(), person2);
-//
-//		}
-//
+				Set<Card> weapons = new HashSet<Card>();//puts all game weapons into a set
+				weapons.addAll(board.getWeapons());
+				Card weapon1 = null;
+				Card weapon2 = null;
+				int i = weapons.size();
+			
+				
+
+				//if multiple weapons not seen, one of them is randomly selected
+				int seen1 = 0;
+				int seen2 = 0;
+				for (i = 0; i < 10; i++) {
+					p.createSuggestion();
+					suggestion = p.getSuggestion();
+					if(suggestion.getWeapon().equals(weapon1)) seen1++;
+					if(suggestion.getWeapon().equals(weapon2)) seen2++;	
+				}
+				assertTrue(seen1 > 0);
+				assertTrue(seen2 > 0);
+
+				p.revealCard(weapon2);
+				p.createSuggestion();
+				suggestion = p.getSuggestion();
+				assertEquals(suggestion.getWeapon(), weapon1);
+
+			}
 
 
+			//if only one person not seen, its selected (can be same test as weapon)
+			Set<Card> people = new HashSet<Card>();//puts all game weapons into a set
+			people.addAll(board.getWeapons());
+			Card person1 = null;
+			Card person2 = null;
+			int i = people.size();
+			for (Card person : people) {
+				if (i == 1) {
+					person1 = person;
+				}
+				else if (i == 2) {
+					person2 = person;
+				}
+				else {
+					p.revealCard(person);
+				}
+				i--;
+			}
 
-	}
+			//if multiple persons not seen, one of them is randomly selected
+			int seen1 = 0;
+			int seen2 = 0;
+			for (i = 0; i < 10; i++) {
+				p.createSuggestion();
+				Solution suggestion1 = p.getSuggestion();
+				if(suggestion1.getWeapon().equals(person1)) seen1++;
+				if(suggestion1.getWeapon().equals(person1)) seen2++;	
+			}
+			assertTrue(seen1 > 0);
+			assertTrue(seen2 > 0);
+
+			p.revealCard(person1);
+			p.createSuggestion();
+			Solution suggestion2 = p.getSuggestion();
+			assertEquals(suggestion2.getWeapon(), person2);
+
+		}
 	}
 	
 	
@@ -189,9 +274,47 @@ public class gameActionTests {
 	 */
 	@Test
 	public void disproveSuggestionTest() {
-		//if player has only one matching card, it should be returned
+		// Create player and give them a deck with known cards
+		ComputerPlayer player = new ComputerPlayer();
+		Set<Card> hand = new HashSet<Card>();
 		
-		//if player has >1 matching cards, returned card should be chosen randomly
+		//Professor Plum
+		Card person = board.getCardDeck().get(0);
+		hand.add(person);
+		//Dining Room
+		Card room = board.getCardDeck().get(6);
+		hand.add(room);
+		//Wrench
+		Card weapon = board.getCardDeck().get(20);
+		hand.add(weapon);
+		
+		player.setHand(hand);
+		
+		// Make new suggestion
+		Solution suggestion = new Solution(person, room, weapon);
+		
+		// Test to see if player disproves all randomly
+		boolean disprovedPerson = false;
+		boolean disprovedRoom = false;
+		boolean disprovedWeapon = false;
+		
+		for (int i=0; i<100; i++) {
+			// Call disprove on player
+			Card card = player.disproveSuggestion(suggestion);
+			
+			if ( card.equals(person) )
+				disprovedPerson = true;
+			else if ( card.equals(room) )
+				disprovedRoom = true;
+			else if ( card.equals(weapon) )
+				disprovedWeapon = true;
+		}
+		
+		// Ensure disprove suggestion chooses all cards at least once
+		assertTrue(disprovedPerson);
+		assertTrue(disprovedRoom);
+		assertTrue(disprovedWeapon);
+		
 		
 		//if player has no matching cards, null is returned
 	}
