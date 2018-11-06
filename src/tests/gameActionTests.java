@@ -109,8 +109,10 @@ public class gameActionTests {
 				loc_16_05 = true;
 			if (selected == board.getCellAt(17, 4))
 				door_1 = true;
+				player.clearLastRoom();
 			if (selected == board.getCellAt(18, 4))
 				door_2 = true;
+				player.clearLastRoom();
 		}
 		
 		// Ensure doors were picked
@@ -188,7 +190,7 @@ public class gameActionTests {
 
 		assertTrue(suggestion.getRoom().getName().equals("Ballroom"));
 				
-		Set<Card> seenList = new HashSet<Card>();
+		Set<Card> seenList = player.getSeen();
 
 		//if only one weapon not seen, its selected
 		Set<Card> weapons = new HashSet<Card>();
@@ -200,6 +202,8 @@ public class gameActionTests {
 				seenList.remove(w);
 			}
 		}
+		player.createSuggestion();
+		suggestion = player.getSuggestion();
 
 		assertTrue(suggestion.getWeapon().getName().equals("Wrench"));
 
@@ -213,6 +217,8 @@ public class gameActionTests {
 				seenList.remove(p);
 			}
 		}
+		player.createSuggestion();
+		suggestion = player.getSuggestion();
 		assertTrue(suggestion.getPerson().getName().equals("Colonel Mustard"));
 
 		//if multiple weapons not seen, one of them is randomly selected
@@ -222,8 +228,8 @@ public class gameActionTests {
 
 		// generates set without dupes of all weapons
 		for (int i=0; i<100; i++) {
-			Solution suggestion1 = player.getSuggestion();
-			weaponsGuessed.add(suggestion1.getWeapon());
+			suggestion = player.getSuggestion();
+			weaponsGuessed.add(suggestion.getWeapon());
 		}
 
 		assertTrue(weaponsGuessed.equals(weapons));
@@ -327,23 +333,6 @@ public class gameActionTests {
 	public void handleSuggestionTest() {
 		
 		//solution that is correct
-				Solution accusation = board.getSolution();
-				assertTrue(board.checkAccusaton(accusation));
-				
-				//solution with wrong person
-				accusation.setPerson(new Card("Adam", CardType.PERSON));
-				assertTrue(board.checkAccusaton(accusation));
-				
-				//solution with wrong weapon
-				accusation = board.getSolution();
-				accusation.setWeapon(new Card("AK47", CardType.WEAPON));
-				assertTrue(board.checkAccusaton(accusation));
-				
-				//solution with wrong room
-				accusation = board.getSolution();
-				accusation.setRoom(new Card("Basement", CardType.ROOM));
-				assertTrue(board.checkAccusaton(accusation));
-				
 		
 		
 		//Suggestion no one can disprove returns null

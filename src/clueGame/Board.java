@@ -581,6 +581,16 @@ public final class Board {
 		return weapons;
 	}
 	
+	public Card getRoomWithInitial(char initial) {
+		String roomName = legend.get(initial);
+		for (Card r : rooms) {
+			if (r.getName().equals(roomName)) {
+				return r;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Return players that are controlled by Computer
 	 * @return
@@ -626,8 +636,7 @@ public final class Board {
 	}
 
 	public boolean checkAccusaton(Solution accusation) {
-		//accusation.equals(theSolution)
-		return false;
+		return accusation.equals(theSolution);
 	}
 
 	public ArrayList<Card> getAllCards() {

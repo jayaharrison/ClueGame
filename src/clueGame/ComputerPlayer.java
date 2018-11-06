@@ -14,9 +14,11 @@ public class ComputerPlayer extends Player {
 	
 	private char lastRoom;
 	private Solution suggestion;
+	BoardCell currentRoom;
 	
 	public ComputerPlayer(String playerName, String color, int row, int column) {
 		super(playerName, color, row, column);
+		currentRoom = Board.getInstance().getCellAt(getRow(), getColumn());
 	}
 	
 	public ComputerPlayer() {
@@ -26,13 +28,13 @@ public class ComputerPlayer extends Player {
 	@Override
 	public BoardCell pickLocation(Set<BoardCell> targets) {
 		
-		/*
 		//Should only choose a valid target (calculating targets already tested –yay)
 		//If room in list and has not been visited last:
 		for ( BoardCell cell : targets ) {
-			if ( cell.isDoorway() && !cell.getInitial().equals(lastRoom) ) {
+			if ( cell.isDoorway() && cell.getInitial() != lastRoom ) {
 				//choose room
 				lastRoom = cell.getInitial();
+				currentRoom = Board.getInstance().getCellAt(getRow(), getColumn());
 				return cell;
 			}
 		}
@@ -43,6 +45,7 @@ public class ComputerPlayer extends Player {
 		int i = 0;
 		for ( BoardCell cell : targets ) {
 			if ( i == num ) {
+				currentRoom = Board.getInstance().getCellAt(getRow(), getColumn());
 				return cell;
 			}
 			i++;
@@ -50,16 +53,61 @@ public class ComputerPlayer extends Player {
 		
 		// Something has gone wrong
 		return null;
-		*/
-		return new BoardCell();
 	}
 	
 	@Override
 	public void createSuggestion() {
 		
-		Card room = new Card("Walkway", CardType.ROOM);
-		Card player = new Card("Adam", CardType.PERSON);
-		Card weapon = new Card("Candle", CardType.WEAPON);
+		Card room = Board.getInstance().getRoomWithInitial(currentRoom.getInitial());
+		
+		
+		
+		Card weapon = null;
+		Set<Card> unseenWeapons = Board.getInstance().getWeapons();
+		
+		for ( Card w : unseenWeapons ) {
+			if ( getSeen().contains(w) ) {
+				unseenWeapons.remove(w);
+			}
+		}
+		
+		int sizeW = unseenWeapons.size();
+		int numW = new Random().nextInt(sizeW);
+		int j = 0;
+		for ( Card w : unseenWeapons ) {
+			if ( j == numW ) {
+				weapon = w;
+				break;
+			}
+			else {
+				j++;
+			}
+		}
+		
+		Card player = null;
+		Set<Card> unseenPlayers = Board.getInstance().getPeople();
+		
+		for ( Card p : unseenPlayers ) {
+			if ( getSeen().contains(p) ) {
+				unseenPlayers.remove(p);
+			}
+		}
+		
+		int size = unseenPlayers.size();
+		int num = new Random().nextInt(size);
+		int i = 0;
+		for ( Card p : unseenPlayers ) {
+			if ( i == num ) {
+				player = p;
+				break;
+			}
+			else {
+				i++;
+			}
+		}
+		
+		
+		
 		suggestion = new Solution(room, player, weapon);
 	}
 	
@@ -74,23 +122,6 @@ public class ComputerPlayer extends Player {
 		return new Card();
 	}
 	
-	public Set<Card> getSeenPeople(){
-		Set<Card> seenPeople = new HashSet<Card>();
-		for (Card c : seen) {
-			if (c.getCardType() == CardType.PERSON)
-				seenPeople.add(c);
-		}
-		return seenPeople;
-	}
-	
-	public Set<Card> getSeenWeapons(){
-		Set<Card> seenWeapons = new HashSet<Card>();
-		for (Card c : seen) {
-			if (c.getCardType() == CardType.WEAPON)
-				seenWeapons.add(c);
-		}
-		return seenWeapons;
-	}
 	
 	
 	public void setLastRoom(char initial) {
@@ -98,18 +129,16 @@ public class ComputerPlayer extends Player {
 	}
 	
 	
-	
-	public void revealCard(Card weapon) {
-		
-		
-	}
-	
 	@Override
 	public void move(int row, int column) {
 		
 	}
 	
 	// TESTING ONLY
+	
+	public void clearLastRoom() {
+		lastRoom = '_';
+	}
 	
 	public void setHand(Set<Card> hand) {
 		this.hand = hand;
