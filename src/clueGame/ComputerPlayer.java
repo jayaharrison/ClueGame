@@ -63,11 +63,13 @@ public class ComputerPlayer extends Player {
 		
 		
 		Card weapon = null;
-		Set<Card> unseenWeapons = Board.getInstance().getWeapons();
+		Set<Card> allWeapons = Board.getInstance().getWeapons();
+		Set<Card> unseenWeapons = new HashSet<Card>();
 		
-		for ( Card w : unseenWeapons ) {
-			if ( getSeen().contains(w) ) {
-				unseenWeapons.remove(w);
+		
+		for ( Card w : allWeapons ) {
+			if ( !getSeen().contains(w) ) {
+				unseenWeapons.add(w);
 			}
 		}
 		
@@ -84,12 +86,16 @@ public class ComputerPlayer extends Player {
 			}
 		}
 		
-		Card player = null;
-		Set<Card> unseenPlayers = Board.getInstance().getPeople();
 		
-		for ( Card p : unseenPlayers ) {
-			if ( getSeen().contains(p) ) {
-				unseenPlayers.remove(p);
+		
+		
+		Card player = null;
+		Set<Card> allPlayers = Board.getInstance().getPeople();
+		Set<Card> unseenPlayers = new HashSet<Card>();
+		
+		for ( Card p : allPlayers ) {
+			if ( !getSeen().contains(p) ) {
+				unseenPlayers.add(p);
 			}
 		}
 		
@@ -118,8 +124,38 @@ public class ComputerPlayer extends Player {
 	
 	@Override
 	public Card disproveSuggestion(Solution suggestion) {
-		//TODO
-		return new Card();
+
+		Card room = suggestion.room;
+		Card person = suggestion.person;
+		Card weapon = suggestion.weapon;
+			
+		boolean containsRoom = hand.contains(room);
+		boolean containsPerson = hand.contains(person);
+		boolean containsWeapon = hand.contains(weapon);
+		
+		Set<Card> newHand = new HashSet<Card>();
+		
+		if (containsRoom) newHand.add(room);
+		if (containsPerson) newHand.add(person);
+		if (containsWeapon) newHand.add(weapon);
+		
+		if (!containsRoom && !containsPerson && !containsWeapon) {
+			return null;
+		} else if (hand.contains(room) || hand.contains(person) || hand.contains(weapon)) {
+			int size = newHand.size();
+			int num = new Random().nextInt(size);
+			int i = 0;
+			for (Card c : newHand) {
+				if (i == num) {
+					return c;
+				}
+				i++;
+			}
+
+		}
+		return null; 
+
+
 	}
 	
 	

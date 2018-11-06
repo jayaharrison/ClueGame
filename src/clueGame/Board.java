@@ -310,7 +310,7 @@ public final class Board {
 			deck.addAll(weapons);
 			allCards.addAll(weapons);
 			
-			for (Card c : deck) {
+			for (Card c : allCards) {
 				System.out.println(c.getName());
 			}
 	}
@@ -500,6 +500,32 @@ public final class Board {
 		
 	}
 
+	
+	public Card handleSuggestion(Player suggestor, Solution suggestion, ArrayList<Player> players) {
+		
+		// Starting and ending location
+		int endLoc = players.indexOf(suggestor);
+		int curLoc = endLoc + 1;
+		
+		// wrapping loop for players
+		while ( curLoc != endLoc ) {
+			if (curLoc >= players.size() ) {
+				curLoc = 0;
+			}
+			
+			// if player can disprove, return card
+			Player player = players.get(curLoc);
+			Card proof = player.disproveSuggestion(suggestion);
+			
+			if ( proof != null ) {
+				return proof;
+			}
+			// else go to next player
+			curLoc++;
+		}
+		// if reach the suggestor, return null	
+		return null;
+	}
 
 	
 	/**
@@ -642,6 +668,15 @@ public final class Board {
 	public ArrayList<Card> getAllCards() {
 		return allCards;
 	}
-
+	
+	public Card getSpecificCard(String name) {
+		for ( Card c : allCards ) {
+			if ( c.getName().equals(name) ) {
+				return c;
+			}
+		}
+		// Only returns if name does not match
+		return null;
+	}
 	
 }

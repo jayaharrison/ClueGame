@@ -17,6 +17,7 @@ import org.junit.Test;
 import clueGame.Board;
 import clueGame.BoardCell;
 import clueGame.ComputerPlayer;
+import clueGame.HumanPlayer;
 import clueGame.Player;
 import clueGame.Solution;
 import clueGame.Card;
@@ -189,10 +190,10 @@ public class gameActionTests {
 		Solution suggestion = player.getSuggestion();
 
 		assertTrue(suggestion.getRoom().getName().equals("Ballroom"));
-				
+		
+		//if only one weapon not seen, its selected
 		Set<Card> seenList = player.getSeen();
 
-		//if only one weapon not seen, its selected
 		Set<Card> weapons = new HashSet<Card>();
 		weapons.addAll(board.getWeapons());//puts all game weapons into a set
 
@@ -225,14 +226,22 @@ public class gameActionTests {
 		seenList.removeAll(weapons);
 
 		Set<Card> weaponsGuessed = new HashSet<Card>();
+		player.addCardToSeen(board.getAllCards().get(20)); 
+		player.addCardToSeen(board.getAllCards().get(19));
 
-		// generates set without dupes of all weapons
+		// generates set without duplicates of all weapons
 		for (int i=0; i<100; i++) {
+			player.createSuggestion();
 			suggestion = player.getSuggestion();
 			weaponsGuessed.add(suggestion.getWeapon());
 		}
 
-		assertTrue(weaponsGuessed.equals(weapons));
+		assertTrue(weaponsGuessed.contains(board.getAllCards().get(15)));
+		assertTrue(weaponsGuessed.contains(board.getAllCards().get(16)));
+		assertTrue(weaponsGuessed.contains(board.getAllCards().get(17)));
+		assertTrue(weaponsGuessed.contains(board.getAllCards().get(18)));
+		assertFalse(weaponsGuessed.contains(board.getAllCards().get(19)));
+		assertFalse(weaponsGuessed.contains(board.getAllCards().get(20)));
 
 
 
@@ -245,6 +254,7 @@ public class gameActionTests {
 		Set<Card> peopleGuessed = new HashSet<Card>();
 
 		for (int i=0; i<100; i++) {
+			player.createSuggestion();
 			Solution suggestion2 = player.getSuggestion();
 			peopleGuessed.add(suggestion2.getPerson());
 		}
@@ -264,19 +274,16 @@ public class gameActionTests {
 	public void disproveSuggestionTest() {
 		// Create player and give them a deck with known cards
 		ComputerPlayer player = new ComputerPlayer();
-		Set<Card> hand = new HashSet<Card>();
 		
-		//Professor Plum
+		// Random person
 		Card person = board.getAllCards().get(0);
-		hand.add(person);
-		//Dining Room
+		player.addCardToHand(person);
+		// Random room
 		Card room = board.getAllCards().get(6);
-		hand.add(room);
-		//Wrench
+		player.addCardToHand(room);
+		// Random room
 		Card weapon = board.getAllCards().get(20);
-		hand.add(weapon);
-		
-		player.setHand(hand);
+		player.addCardToHand(weapon);
 		
 		// Make new suggestion
 		Solution suggestion = new Solution(person, room, weapon);
@@ -307,18 +314,16 @@ public class gameActionTests {
 		//if player has no matching cards, null is returned
 		
 		//Clear hand, change cards to not match
-		hand.clear();
-		//White
+		player.getHand().clear();
+		// person
 		Card person1 = board.getAllCards().get(1);
-		hand.add(person);
-		//Ballroom
+		player.addCardToHand(person1);
+		// room
 		Card room1 = board.getAllCards().get(7);
-		hand.add(room);
-		//Revolver
+		player.addCardToHand(room1);
+		// weapon
 		Card weapon1 = board.getAllCards().get(19);
-		hand.add(weapon);
-
-		player.setHand(hand);
+		player.addCardToHand(weapon1);
 		
 		//Should return null now if suggestion remains the same as before
 		Card card = player.disproveSuggestion(suggestion);
@@ -331,24 +336,106 @@ public class gameActionTests {
 	 */
 	@Test
 	public void handleSuggestionTest() {
+		// Make arrayList of players
+		Player playerOne = new ComputerPlayer();
+		Player playerTwo = new ComputerPlayer();
+		Player playerThree = new ComputerPlayer();
+		Player playerHuman = new HumanPlayer();
 		
-		//solution that is correct
+		ArrayList<Player> players = new ArrayList<Player>();
+		players.add(playerOne);
+		players.add(playerTwo);
+		players.add(playerThree);
+		players.add(playerHuman);
 		
+		// Cards that cannot disprove
+		Card mustard = board.getSpecificCard("Colonel Mustard");
+		Card white = board.getSpecificCard("Mrs. White");
+		Card crematorium = board.getSpecificCard("Crematorium");
+		Card rope = board.getSpecificCard("Rope");
+		Card wrench = board.getSpecificCard("Wrench");
 		
+		// Cards that can disprove
+		Card room = board.getSpecificCard("Ballroom");
+		Card person = board.getSpecificCard("Professor Plum");
+		Card weapon = board.getSpecificCard("Revolver");
+		
+		// Assign cards 
+		playerOne.addCardToHand(mustard);
+		playerTwo.addCardToHand(white);
+		playerThree.addCardToHand(crematorium);
+		playerHuman.addCardToHand(rope);
+		
+		// Test 1
 		//Suggestion no one can disprove returns null
+		Solution suggestion = new Solution(room, person, weapon);
 		
+		Card returned = board.handleSuggestion(playerThree, suggestion, players);
+		
+		assertEquals(null, returned);
+		
+		
+		// Test 2
 		//Suggestion only accusing player can disprove returns null
+		playerThree.getHand().clear();
+		playerThree.addCardToHand(room);
 		
+		// Accusing player has room, no other disproving cards
+		returned = board.handleSuggestion(playerThree, suggestion, players);
+		
+		// Ensure null return
+		assertEquals(null, returned);
+		assertTrue(playerThree.getHand().contains(room));
+		
+		
+		// Test 3
 		//Suggestion only human can disprove returns answer (card that disproves suggestion)
+		playerThree.getHand().clear();
+		playerThree.addCardToHand(crematorium);
 		
-		//Suggestion only human can disproves but humasn is accuser returns null
+		// Human has only disproving card
+		playerHuman.getHand().clear();
+		playerHuman.addCardToHand(weapon);
 		
-		//Suggestion that two players can disprove, correct player (based on starting with next plpayer list) returns answer
+		returned = board.handleSuggestion(playerThree, suggestion, players);
+		assertEquals(weapon, returned);
 		
 		
-		//Suggestion that human and another player can disprove, other player is next in list, ensure other player returns answer
+		// Test 4
+		//Suggestion only human can disproves but human is accuser returns null
+		// Human still has disproving card
+		returned = board.handleSuggestion(playerHuman, suggestion, players);
+		assertEquals(null, returned);
+		assertTrue(playerHuman.getHand().contains(weapon));
 		
 		
+		// Test 5
+		//Suggestion that two players can disprove, correct player (based on starting with next player in list) returns answer
+		playerHuman.getHand().clear();
+		playerHuman.addCardToHand(white);
+		playerOne.addCardToHand(person);
+		playerTwo.addCardToHand(weapon);
+		
+		// PlayerOne should disprove, playerTwo has disproving card too
+		returned = board.handleSuggestion(playerThree, suggestion, players);
+		assertEquals(person, returned);
+		assertTrue(playerTwo.getHand().contains(weapon));
+		
+		
+		// Test 6
+		// Suggestion that human and another player can disprove, other player is next in list, 
+		// ensure other player returns answer. playerThree has card, as does human
+		playerOne.getHand().clear();
+		playerOne.addCardToHand(wrench);
+		playerTwo.getHand().clear();
+		playerTwo.addCardToHand(mustard);
+		playerThree.addCardToHand(person);
+		playerHuman.addCardToHand(room);
+		
+		returned = board.handleSuggestion(playerTwo, suggestion, players);
+		
+		assertEquals(person, returned);
+		assertTrue(playerHuman.getHand().contains(room));
 		
 	}
 

@@ -1,4 +1,38 @@
-Adam contributed plenty, mostly programmed on my machine -Jay
+commit 3751b2e73a0840d12aeda7fc9da02d0407ca410d
+Author: Michael Kinard <mkinard@mines.edu>
+Date:   Tue Nov 6 00:34:44 2018 -0700
+
+    Something is fucking up and its 12:30am and this is really pissing us off.
+
+commit 3f27a7143276bc1f28850bed9372abd5012f4ccd
+Author: Michael Kinard <mkinard@mines.edu>
+Date:   Mon Nov 5 23:25:59 2018 -0700
+
+    All tests for gameActionTest failing
+
+commit 98949c3add4016364f954ec39e35127406b40385
+Author: Jay Harrison <jharrison@mines.edu>
+Date:   Mon Nov 5 21:51:14 2018 -0700
+
+    Added more failing tests. Pushing to swict coders
+
+commit d8f2542a5e58c2e643621d2c53567d5d43c78157
+Author: Michael Kinard <mkinard@mines.edu>
+Date:   Mon Nov 5 18:58:05 2018 -0700
+
+    More progress on gameActionTests
+
+commit 481af1b35c00e7b81effde2f93aa2b74b52cd13d
+Author: Michael Kinard <mkinard@mines.edu>
+Date:   Mon Nov 5 11:59:20 2018 -0700
+
+    Updated some arraylists to sets for easier manipulation in Suggestions
+
+commit 79e0011966c3a3c5cd1dd7fdd4a8ab69c07240c4
+Author: Michael Kinard <mkinard@mines.edu>
+Date:   Sun Nov 4 16:56:53 2018 -0700
+
+    Got one test to fail in gameActionTest, added seen component to ComputerPlayer
 
 commit ca0557b6ada1d7e629f216fd4e93c805a7b35658
 Author: Jay Harrison <jharrison@mines.edu>
