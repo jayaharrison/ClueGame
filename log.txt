@@ -1,3 +1,9 @@
+commit 766cb384015099ca5418ac6d9fe042ca7299cbb6
+Author: Michael Kinard <mkinard@mines.edu>
+Date:   Tue Nov 6 13:18:59 2018 -0700
+
+    gameActionTests all pass
+
 commit 3751b2e73a0840d12aeda7fc9da02d0407ca410d
 Author: Michael Kinard <mkinard@mines.edu>
 Date:   Tue Nov 6 00:34:44 2018 -0700
