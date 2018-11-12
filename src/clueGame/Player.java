@@ -6,6 +6,7 @@
 package clueGame;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
@@ -151,6 +152,14 @@ public class Player {
 	
 	public void addCardToSeen(Card card) {
 		seen.add(card);
+	}
+	
+	public void drawPlayer(Graphics g) {
+		g.setColor(this.convertColor(color));
+		g.drawOval(this.column * 25, this.row * 25, 25, 25);
+		g.fillOval(this.column*25, this.row*25, 25, 25);
+		g.setColor(Color.BLACK);
+		g.drawOval(this.column*25, this.row*25, 25, 25);
 	}
 	
 }

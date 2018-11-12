@@ -1,4 +1,4 @@
-package experiment;
+package clueGame;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -19,14 +19,14 @@ import javax.swing.border.TitledBorder;
  */
 
 
-public class GUI_Example extends JPanel {
+public class ControlGUI extends JPanel {
 	
 	private JTextField name;
 	private JTextField guessField;
 	private JTextField responseField;
 	private JTextField rollField;
 	
-	public GUI_Example() {
+	public ControlGUI() {
 		//Create layout with 2 rows
 		setLayout(new GridLayout(2,0));
 		
@@ -95,10 +95,10 @@ public class GUI_Example extends JPanel {
 		//Create a JFrame with all the normal functionality
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setTitle("GUI Example");
+		frame.setTitle("Control Panel");
 		frame.setSize(1000, 200);
 		//Create the JPanel and add it to the JFrame
-		GUI_Example gui = new GUI_Example();
+		ControlGUI gui = new ControlGUI();
 		frame.add(gui, BorderLayout.CENTER);
 		//Now lets view
 		frame.setVisible(true);

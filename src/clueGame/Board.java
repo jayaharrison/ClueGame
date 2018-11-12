@@ -8,6 +8,7 @@ package clueGame;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +16,10 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
-import java.awt.Color; 
+import javax.swing.JPanel;
+
+import java.awt.Color;
+import java.awt.Graphics;
 import java.lang.reflect.Field;
 
 import clueGame.BoardCell;
@@ -23,12 +27,13 @@ import clueGame.BoardCell;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-public final class Board {
+public final class Board extends JPanel {
 
 	public static final int MAX_BOARD_SIZE = 50;
 	
 	private int numRows;
 	private int numColumns;
+	private int track = 12;
 	
 	private String boardConfigFile;
 	private String roomConfigFile;
@@ -71,6 +76,8 @@ public final class Board {
 		deck = new ArrayList<Card>();
 		allCards = new ArrayList<Card>();
 		
+		//JPanel panel = new JPanel();
+		//panel = paintComponent();
 	}
 	
 	// this method returns the only Board
@@ -157,7 +164,7 @@ public final class Board {
 			
 			Scanner in = new Scanner(file);
 			int rowCount = 0;
-			
+			track = 1;
 			int max = 0;
 			
 			while(in.hasNext()) {
@@ -173,10 +180,9 @@ public final class Board {
 				
 				DoorDirection doorDirection;
 				char roomInitial;
-				
 				for ( int colCount = 0; colCount < rowArray.size(); colCount++ ) {
 					
-					char roomChar = '?';
+					char roomChar;
 					roomInitial = rowArray.get(colCount).charAt(0);
 					
 					// TODO: Add message
@@ -184,6 +190,9 @@ public final class Board {
 					
 					if ( (rowArray.get(colCount).length() == 2) && rowArray.get(colCount).charAt(1) != 'N' ) {
 						roomChar = rowArray.get(colCount).charAt(1);
+					}
+					else {
+						roomChar = rowArray.get(colCount).charAt(0);
 					}
 					
 					switch (roomChar) {
@@ -204,13 +213,27 @@ public final class Board {
 						break;
 					}
 					
-					BoardCell cell = new BoardCell(rowCount, colCount, roomInitial, doorDirection);
-					board[rowCount][colCount] = cell;
+					//Our problem is coming from somewhere in this for loop. We are not populating board correctly. I have called system.println's
+					//in the paintComponent function below with the values of numRows, numColumns and board. Board is coming out to a size of 50, but
+					//numRows and numColumnns have size 0, so thats why our for loops arent working. I tried hard coding the for loops to numbers to see
+					// if it was just the values of numRows and numColumns but got a nullPointerException. I think if we fix how we are storing values to
+					//board within this class and also how we are populating board, numRows and numColumns we can get it working.
+					
+					//I placed a variable "track" initialized to 12 to see where exactly this method is getting stuck. I set it to 1 2 and 3 throughout
+					//this method and it never changes from 12 which means our loadBoardConfig isn't even working to begin with.
+					
+					//BoardCell cell = new BoardCell(rowCount, colCount, roomInitial, doorDirection);
+					board[rowCount][colCount] = new BoardCell(rowCount, colCount, roomInitial, doorDirection);
+					rowCount++;
+					track = 2;
+					System.out.println(rowCount);
 				}
 				rowCount++;
+				track = 3;
 			}
 			numRows = rowCount;
 		} catch (FileNotFoundException e) {
+			System.out.println("There was an error with the boardConfigFile");
 			e.getMessage();
 		}
 	}
@@ -679,4 +702,43 @@ public final class Board {
 		return null;
 	}
 	
+	/**
+	 * JPanel methods
+	 */
+
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		
+		//print room names
+		g.drawString("CINEMA", 25, 50);
+		g.drawString("CREMATORIUM", 200, 50);
+		g.drawString("TOOL CLOSET", 350, 50);
+		g.drawString("HYDROPONICS LAB", 500, 50);
+		g.drawString("BALLROOM", 25, 250);
+		g.drawString("KITCHEN", 25, 500);
+		g.drawString("DINING ROOM", 300, 500);
+		g.drawString("PLANETARIUM", 400, 500);
+		g.drawString("REPTILE ROOM", 500, 500);
+
+		//print each boardcell
+		for (int row = 0; row < getNumRows(); row++) { //numRows is 0 tho
+			for(int col = 0; col < getNumColumns(); col++) { //numColumns is 0 tho
+				board[row][col].drawCell(g);
+			}
+		}
+		System.out.println(track);
+		System.out.println(getNumRows());
+		System.out.println(getNumColumns());
+		System.out.println(board.length);
+		
+		//print Players
+		Collection<Player> playerKeys = players.values();
+		for (Player person : playerKeys) {
+			person.drawPlayer(g);
+		}
+	}
+
 }
+
+	
+
