@@ -1,3 +1,7 @@
+/**
+ * @author Jay Harrison
+ * @author Adam Kinard
+ */
 package clueGame;
 
 import java.awt.BorderLayout;
@@ -12,7 +16,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 /**
- * Experiment with GUI: making the Lower panel of the Game
+ * Menu bars
  * @author Adam Kinard
  * @author Jay Harrison
  *
@@ -41,10 +45,9 @@ public class ControlGUI extends JPanel {
 	}
 	
 	/**
-	 * Methods for the Buttons
+	 * Creates top panel of bottom menu
 	 * @return
 	 */
-	
 	private JPanel createTopPanel() {
 		//no layout specified, so this is flow
 		JButton player = new JButton("Next Player");
@@ -62,6 +65,10 @@ public class ControlGUI extends JPanel {
 		
 	}
 		
+	/**
+	 * Creates bottom panel of bottom menu
+	 * @return
+	 */
 	private JPanel createBottomPanel() {
 		JPanel panel = new JPanel();
 		//Use a grid layout, 2 rows, 1 element per (label, text)
@@ -88,9 +95,10 @@ public class ControlGUI extends JPanel {
 		
 	}
 
-	
-	
-	
+	/**
+	 * Creates control panel
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		//Create a JFrame with all the normal functionality
 		JFrame frame = new JFrame();

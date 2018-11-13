@@ -23,26 +23,50 @@ public class Solution {
 		this.weapon = weapon;
 	}
 
+	/**
+	 * Get person
+	 * @return
+	 */
 	public Card getPerson() {
 		return person;
 	}
 
+	/**
+	 * Set person
+	 * @param person
+	 */
 	public void setPerson(Card person) {
 		this.person = person;
 	}
 
+	/**
+	 * Get room
+	 * @return
+	 */
 	public Card getRoom() {
 		return room;
 	}
 
+	/**
+	 * Set room
+	 * @param room
+	 */
 	public void setRoom(Card room) {
 		this.room = room;
 	}
 
+	/**
+	 * Get weapon
+	 * @return
+	 */
 	public Card getWeapon() {
 		return weapon;
 	}
 
+	/**
+	 * Set weapon
+	 * @param weapon
+	 */
 	public void setWeapon(Card weapon) {
 		this.weapon = weapon;
 	}

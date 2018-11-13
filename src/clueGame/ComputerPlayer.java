@@ -16,6 +16,13 @@ public class ComputerPlayer extends Player {
 	private Solution suggestion;
 	BoardCell currentRoom;
 	
+	/**
+	 * ComputerPlayer constructor
+	 * @param playerName
+	 * @param color
+	 * @param row
+	 * @param column
+	 */
 	public ComputerPlayer(String playerName, String color, int row, int column) {
 		super(playerName, color, row, column);
 		currentRoom = Board.getInstance().getCellAt(getRow(), getColumn());
@@ -117,11 +124,14 @@ public class ComputerPlayer extends Player {
 		suggestion = new Solution(room, player, weapon);
 	}
 	
+	/**
+	 * Gets player's suggestion
+	 * @return
+	 */
 	public Solution getSuggestion() {
 		return suggestion;
 	}
 
-	
 	@Override
 	public Card disproveSuggestion(Solution suggestion) {
 
@@ -158,8 +168,10 @@ public class ComputerPlayer extends Player {
 
 	}
 	
-	
-	
+	/**
+	 * Sets last room the computer entered
+	 * @param initial
+	 */
 	public void setLastRoom(char initial) {
 		lastRoom = initial;
 	}

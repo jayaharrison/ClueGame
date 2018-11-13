@@ -33,7 +33,6 @@ public final class Board extends JPanel {
 	
 	private int numRows;
 	private int numColumns;
-	private int track = 12;
 	
 	private String boardConfigFile;
 	private String roomConfigFile;
@@ -153,7 +152,7 @@ public final class Board extends JPanel {
 	}
 	
 	/**
-	 * Loads board configuration files, throws exception if error is found in file format
+	 * Loads board configuration file, throws exception if error is found in file format
 	 * @throws BadConfigFormatException
 	 */
 	public void loadBoardConfig() throws BadConfigFormatException {
@@ -164,7 +163,6 @@ public final class Board extends JPanel {
 			
 			Scanner in = new Scanner(file);
 			int rowCount = 0;
-			track = 1;
 			int max = 0;
 			
 			while(in.hasNext()) {
@@ -192,7 +190,8 @@ public final class Board extends JPanel {
 						roomChar = rowArray.get(colCount).charAt(1);
 					}
 					else {
-						roomChar = rowArray.get(colCount).charAt(0);
+						// Random char so D or R don't register as doors
+						roomChar = '_';
 					}
 					
 					switch (roomChar) {
@@ -212,24 +211,9 @@ public final class Board extends JPanel {
 						doorDirection = DoorDirection.NONE;
 						break;
 					}
-					
-					//Our problem is coming from somewhere in this for loop. We are not populating board correctly. I have called system.println's
-					//in the paintComponent function below with the values of numRows, numColumns and board. Board is coming out to a size of 50, but
-					//numRows and numColumnns have size 0, so thats why our for loops arent working. I tried hard coding the for loops to numbers to see
-					// if it was just the values of numRows and numColumns but got a nullPointerException. I think if we fix how we are storing values to
-					//board within this class and also how we are populating board, numRows and numColumns we can get it working.
-					
-					//I placed a variable "track" initialized to 12 to see where exactly this method is getting stuck. I set it to 1 2 and 3 throughout
-					//this method and it never changes from 12 which means our loadBoardConfig isn't even working to begin with.
-					
-					//BoardCell cell = new BoardCell(rowCount, colCount, roomInitial, doorDirection);
 					board[rowCount][colCount] = new BoardCell(rowCount, colCount, roomInitial, doorDirection);
-					rowCount++;
-					track = 2;
-					System.out.println(rowCount);
 				}
 				rowCount++;
-				track = 3;
 			}
 			numRows = rowCount;
 		} catch (FileNotFoundException e) {
@@ -238,6 +222,10 @@ public final class Board extends JPanel {
 		}
 	}
 	
+	/**
+	 * Loads player config file, throws exception if error is found in file format
+	 * @throws BadConfigFormatException
+	 */
 	public void loadPlayerConfig() throws BadConfigFormatException {
 
 		try {
@@ -251,7 +239,6 @@ public final class Board extends JPanel {
 				
 				String name = playerArray.get(0);
 				String color = playerArray.get(1).toLowerCase();
-				
 				
 				// Switch for start loc
 				int row = 0, col = 0; 
@@ -285,7 +272,7 @@ public final class Board extends JPanel {
 				}
 						
 				Player player = new Player(name, color, row, col);
-				players.put(name, player);
+				players.put(color, player);
 				people.add(new Card(name, CardType.PERSON));
 			}
 			
@@ -295,7 +282,7 @@ public final class Board extends JPanel {
 	}
 	
 	/**
-	 * Loads in weapons to weapon list
+	 * Loads in weapons to weapon list, throws exception if error is found in file format
 	 * @throws BadConfigFormatException
 	 */
 	public void loadWeaponConfig() throws BadConfigFormatException {
@@ -332,11 +319,8 @@ public final class Board extends JPanel {
 		// Add all weapons
 			deck.addAll(weapons);
 			allCards.addAll(weapons);
-			
-			for (Card c : allCards) {
-				System.out.println(c.getName());
-			}
 	}
+	
 	
 	public void calcAdjacencies() {
 		
@@ -523,7 +507,13 @@ public final class Board extends JPanel {
 		
 	}
 
-	
+	/**
+	 * Handles suggestions made by players and returns any card offered from other players
+	 * @param suggestor
+	 * @param suggestion
+	 * @param players
+	 * @return
+	 */
 	public Card handleSuggestion(Player suggestor, Solution suggestion, ArrayList<Player> players) {
 		
 		// Starting and ending location
@@ -605,11 +595,11 @@ public final class Board extends JPanel {
 	public Map<String,Player> getPlayerMap() {
 		return players;
 	}
+	
 	/**
 	 * Get all Players
 	 * @return
 	 */
-	
 	public Set<Card> getPeople(){
 		return people;
 	}
@@ -630,6 +620,11 @@ public final class Board extends JPanel {
 		return weapons;
 	}
 	
+	/**
+	 * Get room with initial 'i'
+	 * @param initial
+	 * @return
+	 */
 	public Card getRoomWithInitial(char initial) {
 		String roomName = legend.get(initial);
 		for (Card r : rooms) {
@@ -676,22 +671,44 @@ public final class Board extends JPanel {
 		return board[row][col];
 	}
 	
+	/**
+	 * Sets the solution
+	 * @param theSolution
+	 */
 	public void setSolution(Solution theSolution) {
 		this.theSolution = theSolution;
 	}
 	
+	/**
+	 * Gets the solution
+	 * @return
+	 */
 	public Solution getSolution() {
 		return theSolution;
 	}
 
+	/**
+	 * Checks the given accusation with the actual solution
+	 * @param accusation
+	 * @return
+	 */
 	public boolean checkAccusaton(Solution accusation) {
 		return accusation.equals(theSolution);
 	}
 
+	/**
+	 * Gets list of all cards, seperate from the deck
+	 * @return
+	 */
 	public ArrayList<Card> getAllCards() {
 		return allCards;
 	}
 	
+	/**
+	 * Get a card based on name given, must match name or given null
+	 * @param name
+	 * @return
+	 */
 	public Card getSpecificCard(String name) {
 		for ( Card c : allCards ) {
 			if ( c.getName().equals(name) ) {
@@ -703,33 +720,35 @@ public final class Board extends JPanel {
 	}
 	
 	/**
-	 * JPanel methods
+	 * Swing method for drawing
 	 */
-
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
-		//print room names
-		g.drawString("CINEMA", 25, 50);
-		g.drawString("CREMATORIUM", 200, 50);
-		g.drawString("TOOL CLOSET", 350, 50);
-		g.drawString("HYDROPONICS LAB", 500, 50);
-		g.drawString("BALLROOM", 25, 250);
-		g.drawString("KITCHEN", 25, 500);
-		g.drawString("DINING ROOM", 300, 500);
-		g.drawString("PLANETARIUM", 400, 500);
-		g.drawString("REPTILE ROOM", 500, 500);
+		//Draw frame around board
+		g.setColor(Color.BLACK);
+		g.drawRect(0, 0, 25 * numColumns, 25 * numRows);
 
 		//print each boardcell
 		for (int row = 0; row < getNumRows(); row++) { //numRows is 0 tho
 			for(int col = 0; col < getNumColumns(); col++) { //numColumns is 0 tho
-				board[row][col].drawCell(g);
+				getCellAt(row, col).drawCell(g);
 			}
 		}
-		System.out.println(track);
-		System.out.println(getNumRows());
-		System.out.println(getNumColumns());
-		System.out.println(board.length);
+		
+		//print room names
+		g.setColor(Color.BLUE);
+		g.drawString("CINEMA", 15, 70);
+		g.drawString("CREMATORIUM", 152, 40);
+		g.drawString("TOOL CLOSET", 335, 40);
+		g.drawString("HYDRO-", 490, 70);
+		g.drawString("PONICS LAB", 477, 85);
+		g.drawString("BALLROOM", 15, 285);
+		g.drawString("KITCHEN", 25, 475);
+		g.drawString("DINING ROOM", 185, 475);
+		g.drawString("PLANET-", 365, 465);
+		g.drawString("ARIUM", 370, 480);
+		g.drawString("REPTILE ROOM", 455, 375);
 		
 		//print Players
 		Collection<Player> playerKeys = players.values();

@@ -145,15 +145,26 @@ public class Player {
 		return seen;
 	}
 	
+	/**
+	 * Adds specified card to player's hand
+	 * @param card
+	 */
 	public void addCardToHand(Card card) {
 		hand.add(card);
 	}
 	
-	
+	/**
+	 * Adds specified card to player's seen hand
+	 * @param card
+	 */
 	public void addCardToSeen(Card card) {
 		seen.add(card);
 	}
 	
+	/**
+	 * Drawing function for players
+	 * @param g
+	 */
 	public void drawPlayer(Graphics g) {
 		g.setColor(this.convertColor(color));
 		g.drawOval(this.column * 25, this.row * 25, 25, 25);

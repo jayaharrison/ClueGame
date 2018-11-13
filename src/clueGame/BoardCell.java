@@ -19,12 +19,14 @@ public class BoardCell {
 	private char initial;
 	private DoorDirection direction;
 	
+	/**
+	 * Constructor with only row and column, for testing purposes
+	 * @param row
+	 * @param column
+	 */
 	public BoardCell(int row, int column) {
-		super();
 		this.row = row;
 		this.column = column;
-		//initial = ' ';
-		//direction = DoorDirection.NONE;
 	}
 	
 	/**
@@ -35,7 +37,6 @@ public class BoardCell {
 	 * @param direction
 	 */
 	public BoardCell(int row, int column, char initial, DoorDirection direction) {
-		super();
 		this.row = row;
 		this.column = column;
 		this.initial = initial;
@@ -114,6 +115,10 @@ public class BoardCell {
 		return (direction != DoorDirection.NONE);
 	}
 	
+	/**
+	 * BoardCell draw function for swing
+	 * @param g
+	 */
 	public void drawCell(Graphics g) {
 		
 		switch(this.initial) {
@@ -126,14 +131,9 @@ public class BoardCell {
 			g.setColor(Color.BLACK);
 			g.drawRect(this.column * 25, this.row * 25, 25, 25);
 			break;
-		case 'X':
-			//Draw closet
-			g.setColor(Color.PINK);
-			g.drawRect(this.column, this.row, 25, 25);
-			g.fillRect(this.column * 25, this.row * 25, 25, 25);
-			break;
-			
 		default:
+			g.setColor(Color.LIGHT_GRAY);
+			g.fillRect(this.column * 25, this.row * 25, 25, 25);
 			break;
 			
 		}
@@ -161,19 +161,8 @@ public class BoardCell {
 				g.fillRect(this.column * 25 + 22, this.row * 25, 3, 25);
 			}
 		
-		 
-			
-		
 		}
-		
-		//if door, specify direction and draw door
-		//if room, make distinct(grey)
-		//if walkway, print walkway in yellow
-		
-		
 		
 	}
 
-	
-	
 }
