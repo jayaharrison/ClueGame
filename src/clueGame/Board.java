@@ -495,11 +495,12 @@ public final class Board extends JPanel {
 		
 		while ( deck.size() > 0 ) {
 			// Random card
-			Card random = deck.get((int)(Math.random() * deck.size()));
+			
 
 			// Random card to each person in cyclical order
 			Set<String> playerKeys = players.keySet();
 			for (String person : playerKeys) {
+				Card random = deck.get((int)(Math.random() * deck.size()));
 				players.get(person).getHand().add(random);
 				deck.remove(random);
 			}
