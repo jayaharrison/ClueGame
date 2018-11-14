@@ -61,7 +61,6 @@ public class ClueGame extends JFrame {
 		gui = new ControlGUI();
 		side = new MyCardsGUI(userHand);
 		fileMenu = new FileMenu();
-		//splash = new SplashScreen();
 	
 		
 		// JFrame setup
@@ -83,11 +82,9 @@ public class ClueGame extends JFrame {
 	public static void main(String[] args) {
 		//Create a JFrame with all the normal functionality
 		ClueGame game = new ClueGame();
-		JOptionPane pane = new JOptionPane();
-		pane.showMessageDialog(game, message, title, JOptionPane.INFORMATION_MESSAGE);
 		game.setVisible(true);
-		//game.splash.setVisible(true);
-		
+		JOptionPane pane = new JOptionPane();
+		pane.showMessageDialog(game, message, title, JOptionPane.INFORMATION_MESSAGE);	
 	}
 	
 }
