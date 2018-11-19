@@ -164,5 +164,14 @@ public class BoardCell {
 		}
 		
 	}
+	
+	public void drawTargetCell(Graphics g) {
+		//draw walkway
+		g.setColor(Color.PINK);
+		g.drawRect(this.column * 25, this.row * 25, 25, 25);
+		g.fillRect(this.column * 25, this.row * 25, 25, 25);
+		g.setColor(Color.BLACK);
+		g.drawRect(this.column * 25, this.row * 25, 25, 25);
+	}
 
 }

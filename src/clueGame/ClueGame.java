@@ -26,20 +26,17 @@ public class ClueGame extends JFrame {
 	private ControlGUI gui;
 	private MyCardsGUI side;
 	private FileMenu fileMenu;
-	private SplashScreen splash;
-	private static Board board;
+	private Board board;
+	private Map<String, Player> players;
 	
 	private static String title = "Welcome to Clue";
 	private static String message = "You are Miss Scarlet, press Next Player to begin play";
 	
-	Player user = new Player();
-	Set<Card> userHand = new HashSet<Card>();
+	private Player user = new Player();
+	private Set<Card> userHand = new HashSet<Card>();
 	
 	//private ArrayList<Player> players = board.getPlayerMap().values(); //Need to populate
-	
-	
-	
-	
+
 	public ClueGame() {
 		
 		// Get board and set up
@@ -75,6 +72,14 @@ public class ClueGame extends JFrame {
 		
 	}
 	
+	public void updateGame(Player player) {
+		gui.updateGUI(player);
+		board.nextPlayer(player, gui.getDieRoll());
+		
+		//NOT drawing targets
+		board.repaint();
+	}
+	
 	/**
 	 * Runs the game
 	 * @param args
@@ -83,8 +88,25 @@ public class ClueGame extends JFrame {
 		//Create a JFrame with all the normal functionality
 		ClueGame game = new ClueGame();
 		game.setVisible(true);
+		
 		JOptionPane pane = new JOptionPane();
 		pane.showMessageDialog(game, message, title, JOptionPane.INFORMATION_MESSAGE);	
+		
+		boolean gameWon = false;
+		Player currentPlayer = game.getUser();
+		
+		while (!gameWon) {
+			game.updateGame(currentPlayer);
+			
+			//TESTING- pause
+			System.out.println("Press Any Key To Continue...");
+	        new java.util.Scanner(System.in).nextLine();
+		}
+		
 	}
 	
+	
+	public Player getUser() {
+		return this.user;
+	}
 }

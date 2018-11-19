@@ -23,8 +23,7 @@ public class MyCardsGUI extends JPanel {
 	ArrayList<String> personCard = new ArrayList();
 	ArrayList<String> roomCard = new ArrayList();
 	ArrayList<String> weaponCard = new ArrayList();
-	
-	
+	Set<Card> playerHand;
 	
 	public MyCardsGUI(Set<Card> playerHand) {
 		
@@ -127,6 +126,10 @@ public class MyCardsGUI extends JPanel {
 		
 		return myCards;
 		
+	}
+	
+	public void setPlayerHand(Set<Card> hand) {
+		playerHand = hand;
 	}
 	
 }

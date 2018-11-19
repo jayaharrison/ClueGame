@@ -270,10 +270,21 @@ public final class Board extends JPanel {
 					default:
 						break;
 				}
-						
-				Player player = new Player(name, color, row, col);
-				players.put(color, player);
-				people.add(new Card(name, CardType.PERSON));
+				
+				
+				if (name.equals("Miss Scarlett")) {
+					// Human
+					HumanPlayer player = new HumanPlayer(name, color, row, col);
+					players.put(color, player);
+					people.add(new Card(name, CardType.PERSON));
+					System.out.println(name + ", Human");
+				} else {
+					// Computer
+					Player player = new Player(name, color, row, col);
+					players.put(color, player);
+					people.add(new Card(name, CardType.PERSON));
+					System.out.println(name + ", Computer");
+				}
 			}
 			
 		}catch (FileNotFoundException e) {
@@ -540,7 +551,20 @@ public final class Board extends JPanel {
 		// if reach the suggestor, return null	
 		return null;
 	}
-
+	
+	public void nextPlayer(Player player, int dieRoll) {
+		// Called on next player
+		
+		// If human player, draw targets
+		if (player.getPlayerName().equals("Miss Scarlet")) {
+			calcTargets(player.getRow(), player.getColumn(), dieRoll);
+		}
+		// Ensure human picks valid target
+		// Move gamepiece to that target
+		
+		// Computer player moves to random target
+		
+	}
 	
 	/**
 	 * Get targets
@@ -735,6 +759,10 @@ public final class Board extends JPanel {
 			for(int col = 0; col < getNumColumns(); col++) { //numColumns is 0 tho
 				getCellAt(row, col).drawCell(g);
 			}
+		}
+		
+		for (BoardCell cell : targets) {
+			cell.drawTargetCell(g);
 		}
 		
 		//print room names

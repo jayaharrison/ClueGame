@@ -7,6 +7,7 @@
 package clueGame;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -61,7 +62,11 @@ public class HumanPlayer extends Player {
 
 		}
 		return null; 
-
-
+	}
+	
+	public void drawPlayer(Graphics g) {
+		super.drawPlayer(g);
+		//Draw targets
+		
 	}
 }
