@@ -1,3 +1,45 @@
+commit a0b4022e2ecf5368610f081d105e341ae9a3184a
+Author: Jay Harrison <jharrison@mines.edu>
+Date:   Mon Nov 19 18:38:27 2018 -0700
+
+    Working on nextPlayer and accusation buttons
+
+commit efc257b51cef30fb6875b474118b2fa48c83b114
+Author: Jay Harrison <jharrison@mines.edu>
+Date:   Mon Nov 19 14:54:44 2018 -0700
+
+    Working on getting board to draw targets
+
+commit 923a4b9d7697a7754a47683edb236bb5e0cae8f7
+Author: Jay Harrison <jharrison@mines.edu>
+Date:   Wed Nov 14 14:20:08 2018 -0700
+
+    Slightly altered CluGame to display board behind welcome
+
+commit 008d4153e49ec51e0099bcff1bd855f1f2961c52
+Author: Michael Kinard <mkinard@mines.edu>
+Date:   Wed Nov 14 12:56:02 2018 -0700
+
+    Displaying intro message, Human cards appearing on board.
+
+commit 3f17d36d90f8c3dbc4f877e34008c7f5c28d8ccd
+Author: Jay Harrison <jharrison@mines.edu>
+Date:   Mon Nov 12 23:20:33 2018 -0700
+
+    Players, board, and menu including detective notes will appear in the game's GUI
+
+commit 7e02513ba5990ae5c04b5ac4e4d563272722e1a0
+Author: Jay Harrison <jharrison@mines.edu>
+Date:   Mon Nov 12 23:20:10 2018 -0700
+
+    Players, board, and menu including detective notes will appear in the game's GUI
+
+commit 65ef2ea125bb9c921c03144e9815eb01a663a9be
+Author: Michael Kinard <mkinard@mines.edu>
+Date:   Mon Nov 12 12:39:54 2018 -0700
+
+    Players and room names showing up, no board yet.
+
 commit 84804aaf3b596daf314979239a3dd9336a2162c8
 Author: Michael Kinard <mkinard@mines.edu>
 Date:   Tue Nov 6 17:07:23 2018 -0700

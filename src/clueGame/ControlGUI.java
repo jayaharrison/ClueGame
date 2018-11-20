@@ -116,22 +116,15 @@ public class ControlGUI extends JPanel {
 		
 	}
 	
-	public void updateGUI(Player player) {
-		dieRoll = (int)Math.floor(Math.random() * Math.floor(5)) + 1;
+	/**
+	 * Updates the control panel with the next player's turn and die roll.
+	 * @param player
+	 * @param dieRoll
+	 */
+	public void updateGUI(Player player, int dieRoll) {
+		// Update any and all GUI needs
 		rollField.setText(Integer.toString(dieRoll));
 		currentPlayer.setText(player.getPlayerName());
-	}
-	
-	// Next Player button listener
-//	public class nextPlayerListener implements ActionListener {
-//		public void actionPerformed(ActionEvent e) {
-//			// Show dialog
-//			notesDialog.setVisible(true);
-//		}
-//	}
-	
-	public int getDieRoll() {
-		return dieRoll;
 	}
 
 	/**
@@ -148,7 +141,6 @@ public class ControlGUI extends JPanel {
 		ControlGUI gui = new ControlGUI();
 		frame.add(gui);
 		Player p = new Player();
-		gui.updateGUI(p);
 		//Now lets view
 		frame.setVisible(true);
 		

@@ -76,11 +76,12 @@ public final class Board extends JPanel {
 		deck = new ArrayList<Card>();
 		allCards = new ArrayList<Card>();
 		
-		//JPanel panel = new JPanel();
-		//panel = paintComponent();
 	}
 	
-	// this method returns the only Board
+	/**
+	 * Returns the Instance of the Board -- Singleton Pattern
+	 * @return theInstance
+	 */
 	public static Board getInstance() {
 		return theInstance;
 	}
@@ -281,7 +282,7 @@ public final class Board extends JPanel {
 					System.out.println(name + ", Human");
 				} else {
 					// Computer
-					Player player = new Player(name, color, row, col);
+					ComputerPlayer player = new ComputerPlayer(name, color, row, col);
 					players.put(color, player);
 					people.add(new Card(name, CardType.PERSON));
 					System.out.println(name + ", Computer");
@@ -553,23 +554,31 @@ public final class Board extends JPanel {
 		return null;
 	}
 	
+	/**
+	 * Moves to the next player's turn, calculating their targets and moving computer players
+	 * @param player
+	 * @param dieRoll
+	 */
 	public void nextPlayer(Player player, int dieRoll) {
-		// Called on next player
+		// Calculate targets
+		calcTargets(player.getRow(), player.getColumn(), dieRoll);
 		
-		// If human player, draw targets
-		if ( player instanceof HumanPlayer ) {
-			calcTargets(player.getRow(), player.getColumn(), dieRoll);
+		// IF HUMAN
+		if (player instanceof HumanPlayer) {
+			// For drawing targets
 			isHumanPlayer = true;
-		}
-		// Ensure human picks valid target
-		// Move gamepiece to that target
+		}		
 		
-		// Computer player moves to random target
+		// IF COMP
+		// Choose target at random
+		else if (player instanceof ComputerPlayer) {
+			player.makeMove(player.pickLocation(targets));
+		}
 	}
 	
 	/**
 	 * Get targets
-	 * @return
+	 * @return targets
 	 */
 	public Set<BoardCell> getTargets() {
 		return targets;
@@ -577,7 +586,7 @@ public final class Board extends JPanel {
 	
 	/**
 	 * Get legend
-	 * @return
+	 * @return legend
 	 */
 	public Map<Character, String> getLegend() {
 		return legend;
@@ -762,10 +771,12 @@ public final class Board extends JPanel {
 			}
 		}
 		
+		//TBD
 		if (isHumanPlayer) {
 			for (BoardCell cell : targets) {
 				cell.drawTargetCell(g);
 			}
+			isHumanPlayer = false;
 		}
 		
 		//print room names

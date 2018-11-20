@@ -54,19 +54,19 @@ public class Player {
 	
 	public void createSuggestion() {}
 	
+	public BoardCell pickLocation(Set<BoardCell> targets) {
+		return null;
+	}
+	
 	/**
 	 * Moves a player to a specific location
 	 * @param row
 	 * @param column
 	 */
-	public void makeMove(Set<BoardCell> targets) {
+	public void makeMove(BoardCell cell) {
 		// Lets human choose from target list
 		// comp will randomly select from target list
-	}
-
-	public BoardCell pickLocation(Set<BoardCell> targets) {
-		// TODO Auto-generated method stub
-		return null;
+		setLocation(cell.getRow(), cell.getColumn());
 	}
 	
 	
@@ -168,6 +168,11 @@ public class Player {
 		seen.add(card);
 	}
 
+	/**
+	 * Sets location of the player.
+	 * @param row
+	 * @param column
+	 */
 	public void setLocation(int row, int column) {
 		this.row = row;
 		this.column = column;

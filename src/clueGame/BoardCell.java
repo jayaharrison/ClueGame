@@ -165,6 +165,10 @@ public class BoardCell {
 		
 	}
 	
+	/**
+	 * Draws the Target Cells for the Human Player
+	 * @param g
+	 */
 	public void drawTargetCell(Graphics g) {
 		//draw walkway
 		g.setColor(Color.PINK);
