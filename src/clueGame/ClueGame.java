@@ -9,6 +9,10 @@ package clueGame;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
@@ -47,7 +51,7 @@ public class ClueGame extends JFrame {
 		Map<String, Player> players = board.getPlayerMap();
 		
 		for (Player p : players.values()) {
-			if (p.getPlayerName().equals("Miss Scarlett")) {
+			if ( p instanceof HumanPlayer ) {
 				user = p;
 			}
 		}
@@ -56,6 +60,11 @@ public class ClueGame extends JFrame {
 		
 		// Initialize GUIs
 		gui = new ControlGUI();
+		gui.player.addActionListener(new nextPlayerListener());
+		gui.accusation.addActionListener(new accusationListener());
+		
+		
+		
 		side = new MyCardsGUI(userHand);
 		fileMenu = new FileMenu();
 	
@@ -75,9 +84,7 @@ public class ClueGame extends JFrame {
 	public void updateGame(Player player) {
 		gui.updateGUI(player);
 		board.nextPlayer(player, gui.getDieRoll());
-		
-		//NOT drawing targets
-		board.repaint();
+		repaint();
 	}
 	
 	/**
@@ -92,19 +99,24 @@ public class ClueGame extends JFrame {
 		JOptionPane pane = new JOptionPane();
 		pane.showMessageDialog(game, message, title, JOptionPane.INFORMATION_MESSAGE);	
 		
-		boolean gameWon = false;
-		Player currentPlayer = game.getUser();
-		
-		while (!gameWon) {
-			game.updateGame(currentPlayer);
-			
-			//TESTING- pause
-			System.out.println("Press Any Key To Continue...");
-	        new java.util.Scanner(System.in).nextLine();
-		}
 		
 	}
-	
+
+	// Next Player listener
+	public class nextPlayerListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			// run all code for game
+			// goes to next player in list
+		}
+	}
+
+	// Next Player listener
+	public class accusationListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			// run all code for game
+			System.exit(0);
+		}
+	}
 	
 	public Player getUser() {
 		return this.user;

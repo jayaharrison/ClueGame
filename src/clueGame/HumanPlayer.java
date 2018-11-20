@@ -64,6 +64,10 @@ public class HumanPlayer extends Player {
 		return null; 
 	}
 	
+	public void makeMove(Set<BoardCell> targets) {
+		
+	}
+	
 	public void drawPlayer(Graphics g) {
 		super.drawPlayer(g);
 		//Draw targets

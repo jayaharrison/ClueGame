@@ -45,6 +45,7 @@ public final class Board extends JPanel {
 	private Set<BoardCell> targets;
 	private Set<BoardCell> visited;
 	
+	private boolean isHumanPlayer = false;
 
 	private Map<Character, String> legend;
 	private Map<String,Player> players; //Each playable chracter contains a Player attribute and Card(their hand)
@@ -556,14 +557,14 @@ public final class Board extends JPanel {
 		// Called on next player
 		
 		// If human player, draw targets
-		if (player.getPlayerName().equals("Miss Scarlet")) {
+		if ( player instanceof HumanPlayer ) {
 			calcTargets(player.getRow(), player.getColumn(), dieRoll);
+			isHumanPlayer = true;
 		}
 		// Ensure human picks valid target
 		// Move gamepiece to that target
 		
 		// Computer player moves to random target
-		
 	}
 	
 	/**
@@ -761,8 +762,10 @@ public final class Board extends JPanel {
 			}
 		}
 		
-		for (BoardCell cell : targets) {
-			cell.drawTargetCell(g);
+		if (isHumanPlayer) {
+			for (BoardCell cell : targets) {
+				cell.drawTargetCell(g);
+			}
 		}
 		
 		//print room names

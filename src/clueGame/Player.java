@@ -59,12 +59,8 @@ public class Player {
 	 * @param row
 	 * @param column
 	 */
-	public void move(int row, int column) {
-		this.row = row;
-		this.column = column;
-		
+	public void makeMove(Set<BoardCell> targets) {
 		// Lets human choose from target list
-		
 		// comp will randomly select from target list
 	}
 
@@ -74,6 +70,17 @@ public class Player {
 	}
 	
 	
+	/**
+	 * Drawing function for players
+	 * @param g
+	 */
+	public void drawPlayer(Graphics g) {
+		g.setColor(this.convertColor(color));
+		g.drawOval(this.column * 25, this.row * 25, 25, 25);
+		g.fillOval(this.column*25, this.row*25, 25, 25);
+		g.setColor(Color.BLACK);
+		g.drawOval(this.column*25, this.row*25, 25, 25);
+	}
 	
 	// GETTERS & SETTERS
 	/**
@@ -160,17 +167,10 @@ public class Player {
 	public void addCardToSeen(Card card) {
 		seen.add(card);
 	}
-	
-	/**
-	 * Drawing function for players
-	 * @param g
-	 */
-	public void drawPlayer(Graphics g) {
-		g.setColor(this.convertColor(color));
-		g.drawOval(this.column * 25, this.row * 25, 25, 25);
-		g.fillOval(this.column*25, this.row*25, 25, 25);
-		g.setColor(Color.BLACK);
-		g.drawOval(this.column*25, this.row*25, 25, 25);
+
+	public void setLocation(int row, int column) {
+		this.row = row;
+		this.column = column;
 	}
 	
 }

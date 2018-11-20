@@ -5,9 +5,12 @@
 package clueGame;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -31,6 +34,13 @@ public class ControlGUI extends JPanel {
 	private JTextField guessField;
 	private JTextField responseField;
 	private JTextField rollField;
+	
+	JButton player;
+	JButton accusation;
+	
+	private JPanel topPanel;
+	private JPanel bottomPanel;
+	
 	private int dieRoll;
 	
 	public ControlGUI() {
@@ -38,12 +48,12 @@ public class ControlGUI extends JPanel {
 		setLayout(new GridLayout(2,1));
 		
 		//Adds Whose Turn? entry, Next Player button and Make Accusation Button
-		JPanel panel = createTopPanel();
-		add(panel);
+		createTopPanel();
+		add(topPanel);
 		
 		//Adds Die, guess and Guess Result Panels
-		panel = createBottomPanel();
-		add(panel);
+		createBottomPanel();
+		add(bottomPanel);
 	
 	}
 	
@@ -51,31 +61,33 @@ public class ControlGUI extends JPanel {
 	 * Creates top panel of bottom menu
 	 * @return
 	 */
-	private JPanel createTopPanel() {
+	private void createTopPanel() {
 		//no layout specified, so this is flow
-		JButton player = new JButton("Next Player");
-		JButton accusation = new JButton("Make an Accusation");
+		player = new JButton("Next Player");
+		
+		
+		accusation = new JButton("Make an Accusation");
+		
 		currentPlayer = new JTextField(20);
 		currentPlayer.setSize(20, 10);
 		currentPlayer.setEditable(false);
 		currentPlayer.setBorder(new TitledBorder (new EtchedBorder(), "Whose turn?"));
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(1, 3));
-		panel.add(currentPlayer);
-		panel.add(player);
-		panel.add(accusation, getColorModel());
-		return panel;
 		
+		topPanel = new JPanel();
+		topPanel.setLayout(new GridLayout(1, 3));
+		topPanel.add(currentPlayer);
+		topPanel.add(player);
+		topPanel.add(accusation, getColorModel());
 	}
 		
 	/**
 	 * Creates bottom panel of bottom menu
 	 * @return
 	 */
-	private JPanel createBottomPanel() {
+	private void createBottomPanel() {
 		//Create panel for lowerUse a grid layout, 2 rows, 1 element per (label, text)
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(1,3));
+		bottomPanel = new JPanel();
+		bottomPanel.setLayout(new GridLayout(1,3));
 		
 		//Create die roll panel
 		JPanel roll = new JPanel();
@@ -98,11 +110,9 @@ public class ControlGUI extends JPanel {
 		responseField.setEditable(false);
 		response.add(responseField);
 	
-		panel.add(roll, BorderLayout.CENTER);
-		panel.add(guess, BorderLayout.CENTER);
-		panel.add(response, BorderLayout.CENTER);
-		
-		return panel;
+		bottomPanel.add(roll, FlowLayout.LEFT);
+		bottomPanel.add(guess, FlowLayout.CENTER);
+		bottomPanel.add(response, FlowLayout.RIGHT);
 		
 	}
 	
@@ -136,7 +146,7 @@ public class ControlGUI extends JPanel {
 		frame.setSize(1000, 200);
 		//Create the JPanel and add it to the JFrame
 		ControlGUI gui = new ControlGUI();
-		frame.add(gui, BorderLayout.CENTER);
+		frame.add(gui);
 		Player p = new Player();
 		gui.updateGUI(p);
 		//Now lets view
@@ -145,5 +155,6 @@ public class ControlGUI extends JPanel {
 	}
 	
 	
+
 
 }

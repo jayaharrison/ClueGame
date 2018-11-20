@@ -177,9 +177,25 @@ public class ComputerPlayer extends Player {
 	}
 	
 	
-	@Override
-	public void move(int row, int column) {
-		
+	public void makeMove(Set<BoardCell> targets) {
+		// Randomly choose spot, update row, col
+		int size = targets.size();
+		int num = new Random().nextInt(size);
+		int i = 0;
+
+		BoardCell finalTarget = null;
+
+		for ( BoardCell cell : targets ) {
+			if ( i == num ) {
+				finalTarget = cell;
+				break;
+			}
+			else {
+				i++;
+			}
+		}
+
+		this.setLocation(finalTarget.getRow(), finalTarget.getColumn());
 	}
 	
 	// TESTING ONLY
