@@ -15,6 +15,7 @@ public class ComputerPlayer extends Player {
 	private char lastRoom;
 	private Solution suggestion;
 	BoardCell currentRoom;
+	boolean correctGuess = true;
 	
 	/**
 	 * ComputerPlayer constructor
@@ -186,5 +187,6 @@ public class ComputerPlayer extends Player {
 	public void setHand(Set<Card> hand) {
 		this.hand = hand;
 	}
+	
 
 }

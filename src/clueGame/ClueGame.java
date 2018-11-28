@@ -39,12 +39,17 @@ public class ClueGame extends JFrame {
 	private static String turnNotOverMessage = "Please finish your turn before pressing Next Player.";
 	private static String incorrectLocationMessage = "Please select a valid space.";
 	private static String cannotMakeAccusation = "You can only make an accusation during your turn.";
+	private static String cpuWinsTitle = "Winner!";
 	
 	private Player user = new Player();
 	private Set<Card> userHand = new HashSet<Card>();
 	
-	private static int arrayOffset = 0;
-	private Player currentPlayer;
+	private int arrayOffset = 0;
+	private int currentPlayer = 0;
+	private GuessDialog guessDialog;
+	private String cpuSuggestion;
+	private String response;
+	private String cpuWins;
 	
 	private boolean humanIsDone = false;
 	
@@ -100,9 +105,9 @@ public class ClueGame extends JFrame {
 		
 		public void actionPerformed(ActionEvent e) {
 			// run all code for game
-			
+			Player tempPlayer = players.get(currentPlayer);
 			// If human is not done display error
-			if (!humanIsDone && currentPlayer instanceof HumanPlayer) {
+			if (!humanIsDone && players.get(currentPlayer) instanceof HumanPlayer) {
 				JOptionPane errorPane = new JOptionPane();
 				errorPane.showMessageDialog(new JFrame(), turnNotOverMessage, turnNotOverTitle, JOptionPane.INFORMATION_MESSAGE);
 				return;
@@ -113,16 +118,53 @@ public class ClueGame extends JFrame {
 			
 			// Wrap around array if at max
 			if (arrayOffset >= players.size()) arrayOffset = 0;
-			currentPlayer = players.get(arrayOffset);
+			ComputerPlayer cpuPlayer = (ComputerPlayer) players.get(currentPlayer);
 
 			// Roll dice
 			int dieRoll = (int)Math.floor(Math.random() * Math.floor(6)) + 1;
 			
 			// Update GUI with current info
-			gui.updateGUI(currentPlayer, dieRoll);
+			gui.updateGUI(tempPlayer, dieRoll);
+			
+			
+			BoardCell temp = board.getCellAt(players.get(currentPlayer).getRow(), players.get(currentPlayer).getColumn());
+			if (temp.getInitial() != 'W') {
+				cpuPlayer.createSuggestion();
+				cpuSuggestion = cpuPlayer.getSuggestion().toString();
+				
+				if(board.handleSuggestion(cpuPlayer, cpuPlayer.getSuggestion(), players) == null) {
+					//Player wins
+					cpuPlayer.correctGuess = true;
+					response = board.handleSuggestion(cpuPlayer, cpuPlayer.getSuggestion(), players).getName();
+					cpuWins = cpuPlayer.getPlayerName() + " wins!" + "Answer: " + response;
+					JOptionPane winnerPane = new JOptionPane();
+					winnerPane.showMessageDialog(new JFrame(), cpuWins, cpuWinsTitle, JOptionPane.INFORMATION_MESSAGE);
+					gui.responseField.setText("No new clue");
+				}
+				else {
+					response = board.handleSuggestion(cpuPlayer, cpuPlayer.getSuggestion(), players).getName();
+					gui.responseField.setText(response);
+				}
+				gui.guessField.setText(cpuSuggestion);
+				for (Player p : players) {
+					if (p.getPlayerName().equals(cpuPlayer.getSuggestion().getPerson().getName())) {
+						p.setLocation(cpuPlayer.getRow(), cpuPlayer.getColumn());
+					}
+				}
+			}
+			
+			
+			
 			
 			// Call nextplayer
-			board.nextPlayer(currentPlayer, dieRoll);
+			currentPlayer++;
+			if (currentPlayer == 6) {
+				currentPlayer = 0;
+			}
+			board.nextPlayer(players.get(currentPlayer), dieRoll);
+			
+			
+			humanIsDone = true;
 			board.repaint();
 			
 			// Increase offset
@@ -136,7 +178,14 @@ public class ClueGame extends JFrame {
 	public class accusationListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			// run all code for game
-			System.exit(0);
+			if (currentPlayer != 0) {
+				JOptionPane errorPane = new JOptionPane();
+				errorPane.showMessageDialog(new JFrame(), cannotMakeAccusation, turnNotOverTitle, JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+			guessDialog = new GuessDialog();
+			guessDialog.setVisible(true);
+			//System.exit(0);
 		}
 	}
 	
@@ -145,7 +194,7 @@ public class ClueGame extends JFrame {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (currentPlayer instanceof ComputerPlayer) return;
+			if (currentPlayer != 0) return;
 
 			boolean validMove = false;
 
@@ -157,6 +206,14 @@ public class ClueGame extends JFrame {
 						validMove = true;
 						humanIsDone = true;
 						board.repaint();
+						
+						if(board.getCellAt(c.getRow(), c.getColumn()).getInitial() != 'W') {
+							BoardCell temp = board.getCellAt(players.get(0).getRow(), players.get(0).getColumn());
+							String roomName = board.getLegend().get(temp.getInitial());
+							guessDialog = new GuessDialog(roomName);
+							guessDialog.setVisible(true);
+							System.out.println(guessDialog.savedPersonGuess);
+						}
 					}
 				}
 			}
@@ -168,6 +225,35 @@ public class ClueGame extends JFrame {
 				return;
 			}
 		}
+		
+	public class SubmitAccusationClick implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			guessDialog.savedRoomGuess = (String)guessDialog.roomsDropdown.getSelectedItem();
+			guessDialog.savedPersonGuess = (String) guessDialog.playersDropdown.getSelectedItem();
+			guessDialog.savedWeaponGuess = (String) guessDialog.weaponsDropdown.getSelectedItem();
+			Solution s = new Solution(board.getSpecificCard(guessDialog.savedRoomGuess), board.getSpecificCard(guessDialog.savedPersonGuess), board.getSpecificCard(guessDialog.savedWeaponGuess));
+			board.handleSuggestion(players.get(currentPlayer), s, players);
+		}
+		
+	}
+	
+	public class SubmitSuggestionClick implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			BoardCell b = board.getCellAt(players.get(currentPlayer).getRow(), players.get(currentPlayer).getColumn());
+			
+			guessDialog.savedRoomGuess = board.getLegend().get(b);
+			guessDialog.savedPersonGuess = (String) guessDialog.playersDropdown.getSelectedItem();
+			guessDialog.savedWeaponGuess = (String) guessDialog.weaponsDropdown.getSelectedItem();
+			
+			Solution s = new Solution(board.getSpecificCard(guessDialog.savedRoomGuess), board.getSpecificCard(guessDialog.savedPersonGuess), board.getSpecificCard(guessDialog.savedWeaponGuess));
+			board.handleSuggestion(players.get(currentPlayer), s, players);
+		}
+		
+	}
 
 
 		@Override

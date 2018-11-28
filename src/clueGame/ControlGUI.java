@@ -31,8 +31,8 @@ import javax.swing.border.TitledBorder;
 public class ControlGUI extends JPanel {
 	
 	private JTextField currentPlayer;
-	private JTextField guessField;
-	private JTextField responseField;
+	public JTextField guessField;
+	public JTextField responseField;
 	private JTextField rollField;
 	
 	JButton player;

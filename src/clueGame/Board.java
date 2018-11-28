@@ -648,11 +648,20 @@ public final class Board extends JPanel {
 	}
 	
 	/**
-	 * Get ArrayList of weapons
+	 * Get all weapons
 	 * @return
 	 */
 	public Set<Card>getWeapons() {
 		return weapons;
+	}
+	
+	
+	/**
+	 * Get all rooms
+	 * @return 
+	 */
+	public Set<Card> getRooms(){
+		return rooms;
 	}
 	
 	/**
