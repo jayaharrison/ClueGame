@@ -31,7 +31,9 @@ import javax.swing.border.TitledBorder;
 public class ControlGUI extends JPanel {
 	
 	private JTextField currentPlayer;
-	public JTextField guessField;
+	public JTextField roomGuess;
+	public JTextField personGuess;
+	public JTextField weaponGuess;
 	public JTextField responseField;
 	private JTextField rollField;
 	
@@ -98,10 +100,17 @@ public class ControlGUI extends JPanel {
 		
 		// Create guess panel
 		JPanel guess = new JPanel();
+		guess.setLayout(new GridLayout(3,1));
 		guess.setBorder(new TitledBorder (new EtchedBorder(), "Guess"));
-		guessField = new JTextField(15);
-		guessField.setEditable(false);
-		guess.add(guessField);
+		personGuess = new JTextField(15);
+		personGuess.setEditable(false);
+		roomGuess = new JTextField(15);
+		roomGuess.setEditable(false);
+		weaponGuess = new JTextField(15);
+		weaponGuess.setEditable(false);
+		guess.add(personGuess);
+		guess.add(roomGuess);
+		guess.add(weaponGuess);
 		
 		//Create guess response panel
 		JPanel response = new JPanel();

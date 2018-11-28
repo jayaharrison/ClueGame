@@ -155,25 +155,14 @@ public class ClueGame extends JFrame {
 			
 			// Call nextplayer
 			board.nextPlayer(currentPlayer, dieRoll);
+			//TODO: update guess GUI, then repaint
 			board.repaint();
 
 			// Increase offset
 			arrayOffset++;			
-			
-			//TODO: Fix Maybe?
-//			// Call nextplayer
-//			currentPlayer++;
-//			if (currentPlayer == 6) {
-//				currentPlayer = 0;
-//			}
-//			board.nextPlayer(players.get(currentPlayer), dieRoll);
-//			
 //			
 //			humanIsDone = true;
-//			board.repaint();
 //			
-//			// Increase offset
-//			arrayOffset++;
 		
 		}
 	}
