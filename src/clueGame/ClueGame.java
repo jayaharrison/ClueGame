@@ -45,7 +45,7 @@ public class ClueGame extends JFrame {
 	private Set<Card> userHand = new HashSet<Card>();
 	
 	private int arrayOffset = 0;
-	private int currentPlayer = 0;
+	private Player currentPlayer;
 	private GuessDialog guessDialog;
 	private String cpuSuggestion;
 	private String response;
@@ -105,70 +105,75 @@ public class ClueGame extends JFrame {
 		
 		public void actionPerformed(ActionEvent e) {
 			// run all code for game
-			Player tempPlayer = players.get(currentPlayer);
+			// goes to next player in list
+
 			// If human is not done display error
-			if (!humanIsDone && players.get(currentPlayer) instanceof HumanPlayer) {
+			if (!humanIsDone && currentPlayer instanceof HumanPlayer) {
 				JOptionPane errorPane = new JOptionPane();
 				errorPane.showMessageDialog(new JFrame(), turnNotOverMessage, turnNotOverTitle, JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
-			
+
 			// Reset boolean
 			humanIsDone = false;
-			
+
 			// Wrap around array if at max
 			if (arrayOffset >= players.size()) arrayOffset = 0;
-			ComputerPlayer cpuPlayer = (ComputerPlayer) players.get(currentPlayer);
-
+			currentPlayer = players.get(arrayOffset);
 			// Roll dice
 			int dieRoll = (int)Math.floor(Math.random() * Math.floor(6)) + 1;
-			
+
 			// Update GUI with current info
-			gui.updateGUI(tempPlayer, dieRoll);
+			gui.updateGUI(currentPlayer, dieRoll);
 			
-			
-			BoardCell temp = board.getCellAt(players.get(currentPlayer).getRow(), players.get(currentPlayer).getColumn());
-			if (temp.getInitial() != 'W') {
-				cpuPlayer.createSuggestion();
-				cpuSuggestion = cpuPlayer.getSuggestion().toString();
-				
-				if(board.handleSuggestion(cpuPlayer, cpuPlayer.getSuggestion(), players) == null) {
-					//Player wins
-					cpuPlayer.correctGuess = true;
-					response = board.handleSuggestion(cpuPlayer, cpuPlayer.getSuggestion(), players).getName();
-					cpuWins = cpuPlayer.getPlayerName() + " wins!" + "Answer: " + response;
-					JOptionPane winnerPane = new JOptionPane();
-					winnerPane.showMessageDialog(new JFrame(), cpuWins, cpuWinsTitle, JOptionPane.INFORMATION_MESSAGE);
-					gui.responseField.setText("No new clue");
-				}
-				else {
-					response = board.handleSuggestion(cpuPlayer, cpuPlayer.getSuggestion(), players).getName();
-					gui.responseField.setText(response);
-				}
-				gui.guessField.setText(cpuSuggestion);
-				for (Player p : players) {
-					if (p.getPlayerName().equals(cpuPlayer.getSuggestion().getPerson().getName())) {
-						p.setLocation(cpuPlayer.getRow(), cpuPlayer.getColumn());
-					}
-				}
-			}
-			
-			
-			
+			// NEED TO HANDLE IN BOARD< NEXTPLAYER FUNCTION
+//			BoardCell temp = board.getCellAt(players.get(currentPlayer).getRow(), players.get(currentPlayer).getColumn());
+//			if (temp.getInitial() != 'W') {
+//				cpuPlayer.createSuggestion();
+//				cpuSuggestion = cpuPlayer.getSuggestion().toString();
+//				
+//				if(board.handleSuggestion(cpuPlayer, cpuPlayer.getSuggestion(), players) == null) {
+//					//Player wins
+//					cpuPlayer.correctGuess = true;
+//					response = board.handleSuggestion(cpuPlayer, cpuPlayer.getSuggestion(), players).getName();
+//					cpuWins = cpuPlayer.getPlayerName() + " wins!" + "Answer: " + response;
+//					JOptionPane winnerPane = new JOptionPane();
+//					winnerPane.showMessageDialog(new JFrame(), cpuWins, cpuWinsTitle, JOptionPane.INFORMATION_MESSAGE);
+//					gui.responseField.setText("No new clue");
+//				}
+//				else {
+//					response = board.handleSuggestion(cpuPlayer, cpuPlayer.getSuggestion(), players).getName();
+//					gui.responseField.setText(response);
+//				}
+//				gui.guessField.setText(cpuSuggestion);
+//				for (Player p : players) {
+//					if (p.getPlayerName().equals(cpuPlayer.getSuggestion().getPerson().getName())) {
+//						p.setLocation(cpuPlayer.getRow(), cpuPlayer.getColumn());
+//					}
+//				}
+//			}
 			
 			// Call nextplayer
-			currentPlayer++;
-			if (currentPlayer == 6) {
-				currentPlayer = 0;
-			}
-			board.nextPlayer(players.get(currentPlayer), dieRoll);
-			
-			
-			humanIsDone = true;
+			board.nextPlayer(currentPlayer, dieRoll);
 			board.repaint();
-			
+
 			// Increase offset
-			arrayOffset++;
+			arrayOffset++;			
+			
+			//TODO: Fix Maybe?
+//			// Call nextplayer
+//			currentPlayer++;
+//			if (currentPlayer == 6) {
+//				currentPlayer = 0;
+//			}
+//			board.nextPlayer(players.get(currentPlayer), dieRoll);
+//			
+//			
+//			humanIsDone = true;
+//			board.repaint();
+//			
+//			// Increase offset
+//			arrayOffset++;
 		
 		}
 	}
@@ -177,15 +182,14 @@ public class ClueGame extends JFrame {
 	// Handles functions for make an accusation
 	public class accusationListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			// run all code for game
-			if (currentPlayer != 0) {
-				JOptionPane errorPane = new JOptionPane();
-				errorPane.showMessageDialog(new JFrame(), cannotMakeAccusation, turnNotOverTitle, JOptionPane.INFORMATION_MESSAGE);
-				return;
-			}
-			guessDialog = new GuessDialog();
-			guessDialog.setVisible(true);
-			//System.exit(0);
+			// TODO: Fix
+//			if (currentPlayer != 0) {
+//				JOptionPane errorPane = new JOptionPane();
+//				errorPane.showMessageDialog(new JFrame(), cannotMakeAccusation, turnNotOverTitle, JOptionPane.INFORMATION_MESSAGE);
+//				return;
+//			}
+//			guessDialog = new GuessDialog();
+//			guessDialog.setVisible(true);
 		}
 	}
 	
@@ -194,7 +198,7 @@ public class ClueGame extends JFrame {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (currentPlayer != 0) return;
+			if (currentPlayer instanceof ComputerPlayer) return;
 
 			boolean validMove = false;
 
@@ -206,14 +210,15 @@ public class ClueGame extends JFrame {
 						validMove = true;
 						humanIsDone = true;
 						board.repaint();
-						
-						if(board.getCellAt(c.getRow(), c.getColumn()).getInitial() != 'W') {
-							BoardCell temp = board.getCellAt(players.get(0).getRow(), players.get(0).getColumn());
-							String roomName = board.getLegend().get(temp.getInitial());
-							guessDialog = new GuessDialog(roomName);
-							guessDialog.setVisible(true);
-							System.out.println(guessDialog.savedPersonGuess);
-						}
+					
+						// TODO: Fix
+//						if(board.getCellAt(c.getRow(), c.getColumn()).getInitial() != 'W') {
+//							BoardCell temp = board.getCellAt(players.get(0).getRow(), players.get(0).getColumn());
+//							String roomName = board.getLegend().get(temp.getInitial());
+//							guessDialog = new GuessDialog(roomName);
+//							guessDialog.setVisible(true);
+//							System.out.println(guessDialog.savedPersonGuess);
+//						}
 					}
 				}
 			}
@@ -230,11 +235,12 @@ public class ClueGame extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			guessDialog.savedRoomGuess = (String)guessDialog.roomsDropdown.getSelectedItem();
-			guessDialog.savedPersonGuess = (String) guessDialog.playersDropdown.getSelectedItem();
-			guessDialog.savedWeaponGuess = (String) guessDialog.weaponsDropdown.getSelectedItem();
-			Solution s = new Solution(board.getSpecificCard(guessDialog.savedRoomGuess), board.getSpecificCard(guessDialog.savedPersonGuess), board.getSpecificCard(guessDialog.savedWeaponGuess));
-			board.handleSuggestion(players.get(currentPlayer), s, players);
+			//TODO: Fix
+//			guessDialog.savedRoomGuess = (String)guessDialog.roomsDropdown.getSelectedItem();
+//			guessDialog.savedPersonGuess = (String) guessDialog.playersDropdown.getSelectedItem();
+//			guessDialog.savedWeaponGuess = (String) guessDialog.weaponsDropdown.getSelectedItem();
+//			Solution s = new Solution(board.getSpecificCard(guessDialog.savedRoomGuess), board.getSpecificCard(guessDialog.savedPersonGuess), board.getSpecificCard(guessDialog.savedWeaponGuess));
+//			board.handleSuggestion(players.get(currentPlayer), s, players);
 		}
 		
 	}
@@ -243,14 +249,15 @@ public class ClueGame extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			BoardCell b = board.getCellAt(players.get(currentPlayer).getRow(), players.get(currentPlayer).getColumn());
-			
-			guessDialog.savedRoomGuess = board.getLegend().get(b);
-			guessDialog.savedPersonGuess = (String) guessDialog.playersDropdown.getSelectedItem();
-			guessDialog.savedWeaponGuess = (String) guessDialog.weaponsDropdown.getSelectedItem();
-			
-			Solution s = new Solution(board.getSpecificCard(guessDialog.savedRoomGuess), board.getSpecificCard(guessDialog.savedPersonGuess), board.getSpecificCard(guessDialog.savedWeaponGuess));
-			board.handleSuggestion(players.get(currentPlayer), s, players);
+			//TODO: Fix
+//			BoardCell b = board.getCellAt(players.get(currentPlayer).getRow(), players.get(currentPlayer).getColumn());
+//			
+//			guessDialog.savedRoomGuess = board.getLegend().get(b);
+//			guessDialog.savedPersonGuess = (String) guessDialog.playersDropdown.getSelectedItem();
+//			guessDialog.savedWeaponGuess = (String) guessDialog.weaponsDropdown.getSelectedItem();
+//			
+//			Solution s = new Solution(board.getSpecificCard(guessDialog.savedRoomGuess), board.getSpecificCard(guessDialog.savedPersonGuess), board.getSpecificCard(guessDialog.savedWeaponGuess));
+//			board.handleSuggestion(players.get(currentPlayer), s, players);
 		}
 		
 	}

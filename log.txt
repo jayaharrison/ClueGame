@@ -1,3 +1,9 @@
+commit 3c8ba6ffb6109b5da4fc014b26411690947923ce
+Author: Jay Harrison <jharrison@mines.edu>
+Date:   Mon Nov 19 22:56:26 2018 -0700
+
+    Completed C23A requirements, players move
+
 commit a0b4022e2ecf5368610f081d105e341ae9a3184a
 Author: Jay Harrison <jharrison@mines.edu>
 Date:   Mon Nov 19 18:38:27 2018 -0700
