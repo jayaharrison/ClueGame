@@ -40,9 +40,6 @@ public class MyCardsGUI extends JPanel {
 			}
 		}
 		
-		
-		
-		
 		//Adds Whose Turn? entry, Next Player button and Make Accusation Button
 		JPanel panel = createCardPanel();
 		add(panel);

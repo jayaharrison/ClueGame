@@ -46,6 +46,7 @@ public final class Board extends JPanel {
 	private Set<BoardCell> visited;
 	
 	private boolean isHumanPlayer = false;
+	private boolean correctGuess;
 
 	private Map<Character, String> legend;
 	private Map<String,Player> players; //Each playable chracter contains a Player attribute and Card(their hand)
@@ -566,6 +567,8 @@ public final class Board extends JPanel {
 	 * @param dieRoll
 	 */
 	public void nextPlayer(Player player, int dieRoll, ArrayList<Player> players) {
+		
+		
 		// Calculate targets
 		calcTargets(player.getRow(), player.getColumn(), dieRoll);
 		
@@ -578,8 +581,14 @@ public final class Board extends JPanel {
 		// IF COMP
 		// Choose target at random
 		else if (player instanceof ComputerPlayer) {
+			if (((ComputerPlayer) player).getAccuseFlag()) {
+				setCorrectGuess(checkAccusaton(((ComputerPlayer) player).getSuggestion()));
+				return;
+			}
+			
 			player.makeMove(player.pickLocation(targets));
 			BoardCell playerLoc = getCellAt(player.getRow(), player.getColumn());
+			
 			if (playerLoc.isRoom()) {
 				player.createSuggestion();
 				disproven = handleSuggestion(player, ((ComputerPlayer) player).getSuggestion(), players);
@@ -587,10 +596,26 @@ public final class Board extends JPanel {
 					((ComputerPlayer)player).setAccuseFlag();
 				}
 			}
-			
 		}
 	}
 	
+	/**
+	 * 
+	 * @param player
+	 */
+	public void showCardsOnDeath(Player player) {
+		Set<String> playerKeys = players.keySet();
+		for (Card card : player.getHand()) {
+			for (String person : playerKeys) {
+				players.get(person).addCardToSeen(card);
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public Card getDisproven() {
 		return disproven;
 	}
@@ -767,6 +792,7 @@ public final class Board extends JPanel {
 		return allCards;
 	}
 	
+	// TESTING ONLY
 	/**
 	 * Get a card based on name given, must match name or given null
 	 * @param name
@@ -826,6 +852,18 @@ public final class Board extends JPanel {
 		for (Player person : playerKeys) {
 			person.drawPlayer(g);
 		}
+	}
+
+	public boolean isCorrectGuess() {
+		return correctGuess;
+	}
+
+	public void setCorrectGuess(boolean correctGuess) {
+		this.correctGuess = correctGuess;
+	}
+	
+	public Card getRoom(Player player) {
+		return getRoomWithInitial(getCellAt(player.getRow(), player.getColumn()).getInitial());
 	}
 
 }

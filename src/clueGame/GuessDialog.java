@@ -12,14 +12,21 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-public class GuessDialog extends JDialog implements ActionListener {
+public class GuessDialog extends JDialog  {
 
 	private JTextField currentRoom;
 	private JTextField person;
 	private JTextField weapon;
-	public String savedRoomGuess;
-	public String savedPersonGuess;
-	public String savedWeaponGuess;
+	private String personString;
+	private String weaponString;
+	public Card savedRoomGuess;
+	public Card savedPersonGuess;
+	public Card savedWeaponGuess;
+	public Solution suggestion;
+
+	public Board board;
+	
+	private Player player;
 	
 	JComboBox<String> playersDropdown;
 	JComboBox<String> weaponsDropdown;
@@ -27,32 +34,10 @@ public class GuessDialog extends JDialog implements ActionListener {
 	JButton submit;
 	JButton cancel;
 	
-	Board board;
-	
-	class GetSelectedItem implements ActionListener {
-
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (e.getSource() == playersDropdown) {
-				savedPersonGuess = (String) playersDropdown.getSelectedItem();
-				System.out.println(savedPersonGuess);
-			}
-			if (e.getSource() == roomsDropdown) {
-				savedRoomGuess = (String) roomsDropdown.getSelectedItem();
-				System.out.println(savedRoomGuess);
-			}
-			if (e.getSource() == weaponsDropdown) {
-				savedWeaponGuess = (String) weaponsDropdown.getSelectedItem();
-				System.out.println(savedWeaponGuess);
-			}
-
-		}
-	}
-	
-	public GuessDialog(String roomEntered) {
-		//Board
+	public GuessDialog(Player p) {
+		//Board/player
 		Board board = Board.getInstance();
+		this.player = p;
 		
 		//Settings
 		setSize(300,300);
@@ -61,7 +46,8 @@ public class GuessDialog extends JDialog implements ActionListener {
 		// Room panel
 		JLabel roomLabel = new JLabel("Room");
 		currentRoom = new JTextField(20);
-		currentRoom.setText(roomEntered);
+		currentRoom.setText(board.getRoom(player).getName());
+		savedRoomGuess = board.getRoom(player);
 		currentRoom.setEditable(false);
 		
 		// Dropdowns
@@ -76,7 +62,10 @@ public class GuessDialog extends JDialog implements ActionListener {
 		
 		//Buttons
 		JButton submit = new JButton("Submit");
+		submit.addActionListener(new SubmitGuessListener());
+		
 		JButton cancel = new JButton("Cancel");
+		cancel.addActionListener(new CancelListener());
 		
 		// Add to main panel
 		add(roomLabel);
@@ -89,6 +78,11 @@ public class GuessDialog extends JDialog implements ActionListener {
 		add(cancel);
 	}
 
+	/**
+	 * returns selected weapon from suggestion
+	 * @param weapons
+	 * @return
+	 */
 	private JComboBox<String> createWeaponsDropdown(Set<Card> weapons) {
 		JComboBox<String> weaponList = new JComboBox<String>();
 		for (Card w : weapons) {
@@ -97,6 +91,11 @@ public class GuessDialog extends JDialog implements ActionListener {
 		return weaponList;
 	}
 
+	/**
+	 * returns selected player from suggestion
+	 * @param players
+	 * @return
+	 */
 	private JComboBox<String> createPlayersDropdown(Set<Card> players) {
 		JComboBox<String> people = new JComboBox<String>();
 		for (Card p : players) {
@@ -105,24 +104,43 @@ public class GuessDialog extends JDialog implements ActionListener {
 		return people;
 	}
 	
+	// ActionListeners
+	public class SubmitGuessListener implements ActionListener {
 
-	public static void main(String[] args) {
-		// Board init
 		Board board = Board.getInstance();
-		board.setConfigFiles("ClueLayout.csv", "ClueRooms.txt", "CluePlayers.txt", "ClueWeapons.txt");
-		board.initialize();
 		
-		// Room init
-		String room = board.getLegend().get('K');
-		
-		// Test
-		GuessDialog main = new GuessDialog(room);
-		main.setVisible(true);
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			personString = (String) playersDropdown.getSelectedItem();
+			weaponString = (String) weaponsDropdown.getSelectedItem();
+			
+			// Find cards to make suggestion
+			for (Card c : board.getAllCards()) {
+				if ( c.getName().equals(personString) )
+					savedPersonGuess = c;
+				else if (c.getName().equals(weaponString))
+					savedWeaponGuess = c;
+			}
+			
+			// Set suggestion, flag
+			((HumanPlayer) player).createHumanSuggestion(board.getRoom(player), savedPersonGuess, savedWeaponGuess);
+			
+			// Close
+			dispose();
+		}
+
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
+
+	public class CancelListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			dispose();
+		}
 	}
+	
+
+
+
+	
 }

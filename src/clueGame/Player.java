@@ -18,7 +18,16 @@ public class Player {
 	private int column;
 	private String color;
 	private boolean inRoom;
+	private boolean isAlive;
 	
+	public boolean isAlive() {
+		return isAlive;
+	}
+
+	public void setAlive(boolean isAlive) {
+		this.isAlive = isAlive;
+	}
+
 	protected Set<Card> hand;
 	protected Set<Card> seen;
 	
@@ -35,6 +44,7 @@ public class Player {
 		this.row = row;
 		this.column = column;
 		
+		isAlive = true;
 		inRoom = false;
 		
 		seen = new HashSet<Card>();
@@ -82,6 +92,9 @@ public class Player {
 	 * @param g
 	 */
 	public void drawPlayer(Graphics g) {
+		if (!isAlive) {
+			return;
+		}
 		g.setColor(this.convertColor(color));
 		g.drawOval(this.column * 25, this.row * 25, 25, 25);
 		g.fillOval(this.column*25, this.row*25, 25, 25);

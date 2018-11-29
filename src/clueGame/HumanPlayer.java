@@ -13,7 +13,10 @@ import java.util.Random;
 import java.util.Set;
 
 public class HumanPlayer extends Player {
-
+	
+	private Solution playerSuggestion;
+	private boolean hasSuggestion;
+	
 	/**
 	 * HumanPlayer constructor, invokes parent constructor
 	 * @param playerName
@@ -23,6 +26,7 @@ public class HumanPlayer extends Player {
 	 */
 	public HumanPlayer(String playerName, String color, int row, int column) {
 		super(playerName, color, row, column);
+		hasSuggestion = false;
 	}
 	
 	public HumanPlayer() {
@@ -64,10 +68,24 @@ public class HumanPlayer extends Player {
 		return null; 
 	}
 	
+	public void createHumanSuggestion(Card room, Card person, Card weapon) {
+		playerSuggestion = new Solution(room, person, weapon);
+		hasSuggestion = true;
+	}
+	
+	public Solution getHumanSuggestion() {
+		return playerSuggestion;
+	}
+	
+	public boolean getSuggestionFlag() {
+		return hasSuggestion;
+	}
+	
+	public void setSuggestionFlag(boolean flag) {
+		hasSuggestion = flag;
+	}
 	
 	public void drawPlayer(Graphics g) {
 		super.drawPlayer(g);
-		//Draw targets
-		
 	}
 }

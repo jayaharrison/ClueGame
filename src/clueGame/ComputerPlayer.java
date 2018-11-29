@@ -131,6 +131,7 @@ public class ComputerPlayer extends Player {
 		return suggestion;
 	}
 
+
 	@Override
 	public Card disproveSuggestion(Solution suggestion) {
 
@@ -190,6 +191,13 @@ public class ComputerPlayer extends Player {
 	
 	public void setAccuseFlag() {
 		shouldAccuse = true;
+	}
+	/**
+	 * returns the accuse flag for computer to make an accusatio next turn
+	 * @return
+	 */
+	public boolean getAccuseFlag() {
+		return shouldAccuse;
 	}
 
 }
