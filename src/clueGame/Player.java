@@ -17,6 +17,7 @@ public class Player {
 	private int row;
 	private int column;
 	private String color;
+	private boolean inRoom;
 	
 	protected Set<Card> hand;
 	protected Set<Card> seen;
@@ -33,6 +34,8 @@ public class Player {
 		this.color = color;
 		this.row = row;
 		this.column = column;
+		
+		inRoom = false;
 		
 		seen = new HashSet<Card>();
 		hand = new HashSet<Card>();
@@ -67,6 +70,10 @@ public class Player {
 		// Lets human choose from target list
 		// comp will randomly select from target list
 		setLocation(cell.getRow(), cell.getColumn());
+		
+		// Check for room status
+		if (cell.isRoom()) inRoom = true;
+		else inRoom = false;
 	}
 	
 	
@@ -176,6 +183,10 @@ public class Player {
 	public void setLocation(int row, int column) {
 		this.row = row;
 		this.column = column;
+	}
+	
+	public boolean isInRoom() {
+		return inRoom;
 	}
 	
 }

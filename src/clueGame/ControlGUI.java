@@ -135,6 +135,15 @@ public class ControlGUI extends JPanel {
 		rollField.setText(Integer.toString(dieRoll));
 		currentPlayer.setText(player.getPlayerName());
 	}
+	
+	public void updateGuessGUI(Solution suggestion, Card guessResult) {
+		roomGuess.setText(suggestion.getRoom().getName());
+		personGuess.setText(suggestion.getPerson().getName());
+		weaponGuess.setText(suggestion.getWeapon().getName());
+		
+		if (guessResult == null) responseField.setText("No new clue");
+		else responseField.setText(guessResult.getName());
+	}
 
 	/**
 	 * Creates control panel

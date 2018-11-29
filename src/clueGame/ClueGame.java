@@ -153,10 +153,18 @@ public class ClueGame extends JFrame {
 //				}
 //			}
 			
+			
 			// Call nextplayer
-			board.nextPlayer(currentPlayer, dieRoll);
-			//TODO: update guess GUI, then repaint
+			board.nextPlayer(currentPlayer, dieRoll, players);
 			board.repaint();
+			if (arrayOffset > 0 && currentPlayer.isInRoom()) {
+				//handle computer suggestion, created inside of Board.nextPlayer
+				gui.updateGuessGUI(((ComputerPlayer) currentPlayer).getSuggestion(), board.getDisproven());
+				if ( board.getDisproven() == null ) {
+					((ComputerPlayer)currentPlayer).setAccuseFlag();
+				}
+			}
+			//board.repaint();
 
 			// Increase offset
 			arrayOffset++;			

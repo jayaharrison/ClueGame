@@ -52,6 +52,7 @@ public final class Board extends JPanel {
 	private Set<Card> weapons;
 	private Set<Card> rooms;
 	private Set<Card> people;
+	private Card disproven;
 	
 	
 	private ArrayList<Card> deck;
@@ -545,6 +546,11 @@ public final class Board extends JPanel {
 			Card proof = player.disproveSuggestion(suggestion);
 			
 			if ( proof != null ) {
+				//update all players seenHand
+				for (Player p : players) {
+					p.addCardToSeen(proof);
+				}
+				
 				return proof;
 			}
 			// else go to next player
@@ -559,7 +565,7 @@ public final class Board extends JPanel {
 	 * @param player
 	 * @param dieRoll
 	 */
-	public void nextPlayer(Player player, int dieRoll) {
+	public void nextPlayer(Player player, int dieRoll, ArrayList<Player> players) {
 		// Calculate targets
 		calcTargets(player.getRow(), player.getColumn(), dieRoll);
 		
@@ -573,9 +579,22 @@ public final class Board extends JPanel {
 		// Choose target at random
 		else if (player instanceof ComputerPlayer) {
 			player.makeMove(player.pickLocation(targets));
+			BoardCell playerLoc = getCellAt(player.getRow(), player.getColumn());
+			if (playerLoc.isRoom()) {
+				player.createSuggestion();
+				disproven = handleSuggestion(player, ((ComputerPlayer) player).getSuggestion(), players);
+				if ( disproven == null ) {
+					((ComputerPlayer)player).setAccuseFlag();
+				}
+			}
+			
 		}
 	}
 	
+	public Card getDisproven() {
+		return disproven;
+	}
+
 	/**
 	 * Get targets
 	 * @return targets

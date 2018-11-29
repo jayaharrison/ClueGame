@@ -14,8 +14,8 @@ public class ComputerPlayer extends Player {
 	
 	private char lastRoom;
 	private Solution suggestion;
-	BoardCell currentRoom;
-	boolean correctGuess = true;
+	private BoardCell currentCell;
+	private boolean shouldAccuse = false;
 	
 	/**
 	 * ComputerPlayer constructor
@@ -26,7 +26,7 @@ public class ComputerPlayer extends Player {
 	 */
 	public ComputerPlayer(String playerName, String color, int row, int column) {
 		super(playerName, color, row, column);
-		currentRoom = Board.getInstance().getCellAt(getRow(), getColumn());
+		currentCell = Board.getInstance().getCellAt(getRow(), getColumn());
 	}
 	
 	public ComputerPlayer() {
@@ -42,7 +42,7 @@ public class ComputerPlayer extends Player {
 			if ( cell.isDoorway() && cell.getInitial() != lastRoom ) {
 				//choose room
 				lastRoom = cell.getInitial();
-				currentRoom = Board.getInstance().getCellAt(getRow(), getColumn());
+				currentCell = Board.getInstance().getCellAt(getRow(), getColumn());
 				return cell;
 			}
 		}
@@ -53,7 +53,7 @@ public class ComputerPlayer extends Player {
 		int i = 0;
 		for ( BoardCell cell : targets ) {
 			if ( i == num ) {
-				currentRoom = Board.getInstance().getCellAt(getRow(), getColumn());
+				currentCell = Board.getInstance().getCellAt(getRow(), getColumn());
 				return cell;
 			}
 			i++;
@@ -65,10 +65,8 @@ public class ComputerPlayer extends Player {
 	
 	@Override
 	public void createSuggestion() {
-		
-		Card room = Board.getInstance().getRoomWithInitial(currentRoom.getInitial());
-		
-		
+		currentCell = Board.getInstance().getCellAt(getRow(), getColumn());
+		Card room = Board.getInstance().getRoomWithInitial(currentCell.getInitial());
 		
 		Card weapon = null;
 		Set<Card> allWeapons = Board.getInstance().getWeapons();
@@ -178,6 +176,10 @@ public class ComputerPlayer extends Player {
 	}
 	
 	
+	public BoardCell getCurrentCell() {
+		return currentCell;
+	}
+	
 	// TESTING ONLY
 	
 	public void clearLastRoom() {
@@ -188,5 +190,8 @@ public class ComputerPlayer extends Player {
 		this.hand = hand;
 	}
 	
+	public void setAccuseFlag() {
+		shouldAccuse = true;
+	}
 
 }
