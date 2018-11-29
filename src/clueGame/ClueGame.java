@@ -160,9 +160,6 @@ public class ClueGame extends JFrame {
 			if (arrayOffset > 0 && currentPlayer.isInRoom()) {
 				//handle computer suggestion, created inside of Board.nextPlayer
 				gui.updateGuessGUI(((ComputerPlayer) currentPlayer).getSuggestion(), board.getDisproven());
-				if ( board.getDisproven() == null ) {
-					((ComputerPlayer)currentPlayer).setAccuseFlag();
-				}
 			}
 			//board.repaint();
 
